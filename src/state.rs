@@ -1,8 +1,6 @@
-use std::fmt::{Display};
+use std::fmt::Display;
 
-pub const BOARD_WIDTH: i32 = 7;
-pub const BOARD_HEIGHT: i32 = 6;
-pub const BOARD_TOTAL_PIECES: i32 = BOARD_HEIGHT * BOARD_WIDTH;
+use crate::constants::{BOARD_HEIGHT, BOARD_TOTAL_PIECES, BOARD_WIDTH};
 
 enum Piece {
     BlackKing,
@@ -21,7 +19,7 @@ impl Display for Piece {
             Piece::BlackPawn => "\x1b[30mo",
             Piece::WhiteKing => "\x1b[33mW",
             Piece::WhitePawn => "\x1b[33mo",
-            Piece::None => "-",
+            Piece::None => "\x1b[30m-",
         };
 
         //write!(f, "\x1b[47m {}\x1b[0m", displayed_text)
@@ -45,13 +43,13 @@ impl Display for Board {
         let mut text = String::new();
 
         text.push_str("\x1b[47m");
-        text.push_str(" +---------------+ ");
+        text.push_str("\x1b[30m +---------------+ ");
         text.push_str("\x1b[0m");
         text.push_str("\n");
 
         for y in 0..BOARD_HEIGHT {
             text.push_str("\x1b[47m");
-            text.push_str(" |");
+            text.push_str("\x1b[30m |");
             text.push_str("\x1b[0m");
 
             for x in 0..BOARD_WIDTH {
@@ -62,13 +60,13 @@ impl Display for Board {
             }
 
             text.push_str("\x1b[47m");
-            text.push_str(" | ");
+            text.push_str("\x1b[30m | ");
             text.push_str("\x1b[0m");
             text.push_str("\n");
         }
 
         text.push_str("\x1b[47m");
-        text.push_str(" +---------------+ ");
+        text.push_str("\x1b[30m +---------------+ ");
         text.push_str("\x1b[0m");
         text.push_str("\n");
 
@@ -98,8 +96,6 @@ impl Board {
         pieces[31] = Piece::BlackPawn;
         pieces[32] = Piece::BlackPawn;
 
-        Self {
-            pieces,
-        }
+        Self { pieces }
     }
 }
