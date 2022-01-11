@@ -1,4 +1,4 @@
-use crate::valid_board_gen::check_connected;
+use crate::valid_board_gen::is_connected;
 use crate::{state::Board, valid_board_gen::generate_valid_boards};
 
 mod constants;
@@ -11,6 +11,6 @@ fn main() {
 
     println!("{}", board);
 
-    //generate_valid_boards();
-    check_connected(0b000000000000000000000000000001011111111111, 0);
+    generate_valid_boards();
+    //check_connected(0b000111100000000000000000000001011111111111, 38);
 }

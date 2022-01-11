@@ -1,4 +1,4 @@
-use crate::constants::{BOARD_HEIGHT, BOARD_WIDTH};
+use crate::constants::{BitBoard, BOARD_HEIGHT, BOARD_WIDTH};
 
 // algorithm from https://stackoverflow.com/a/2075867/5460583
 pub fn generate_valid_boards() {
@@ -9,26 +9,54 @@ pub fn generate_valid_boards() {
     const MAX: i64 = 11058116888;
 
     let mut v = START;
+
+    let mut j = 0;
+    let mut k = 0;
     for i in 0..MAX {
+        if is_connected(v, v.trailing_zeros() as i8) {
+            k += 1;
+        }
+
         let t = v | (v - 1);
         let w = (t + 1) | (((!t & -!t) - 1) >> (v.trailing_zeros() + 1));
         v = w;
 
-        if i % 1000000000 == 0 {
-            println!("{:042b}", w);
+        if i % 100000000 == 0 {
+            println!("{} {}/{} ({}%) {:042b}", j, k, i, k as f32 / i as f32, w);
+            j += 1;
         }
     }
 }
 
-// algorithm from https://en.wikipedia.org/wiki/Flood_fill#Span_Filling
-pub fn check_connected(bit_board: i64, bit_index: u8) -> bool {
-    println!("{:042b}", bit_board);
-    println!("{:042b}", bit_board & 1 << bit_index);
-    println!("{}", is_board_bit_set(bit_board, bit_index));
-    false
+pub fn is_connected(bit_board: i64, bit_index: i8) -> bool {
+    let x = bit_index % BOARD_WIDTH;
+    let y = bit_index / BOARD_WIDTH;
+
+    flood_fill(bit_board, x, y) == 0
 }
 
-fn is_board_bit_set(bit_board: i64, bit_index: u8) -> bool {
+fn flood_fill(bit_board: BitBoard, x: i8, y: i8) -> BitBoard {
+    let mut bb = bit_board;
+
+    if !is_board_coord_set(bb, x, y) {
+        return bit_board;
+    }
+
+    bb = unset_bit(bb, x, y);
+    bb = flood_fill(bb, x - 1, y);
+    bb = flood_fill(bb, x + 1, y);
+    bb = flood_fill(bb, x, y - 1);
+    bb = flood_fill(bb, x, y + 1);
+
+    bb
+}
+
+fn unset_bit(bit_board: BitBoard, x: i8, y: i8) -> BitBoard {
+    let mask = 1 << (BOARD_WIDTH * y + x);
+    bit_board & !mask
+}
+
+fn is_board_bit_set(bit_board: i64, bit_index: i8) -> bool {
     bit_board & 1 << bit_index != 0
 }
 
@@ -42,7 +70,7 @@ fn is_board_bit_set(bit_board: i64, bit_index: u8) -> bool {
 //   0000010  |
 // <----------+
 //  x
-fn is_board_coord_set(bit_board: i64, x: u8, y: u8) -> bool {
+fn is_board_coord_set(bit_board: i64, x: i8, y: i8) -> bool {
     if x < 0 || x > BOARD_WIDTH || y < 0 || y > BOARD_HEIGHT {
         return false;
     }
@@ -52,9 +80,71 @@ fn is_board_coord_set(bit_board: i64, x: u8, y: u8) -> bool {
 
 #[cfg(test)]
 mod test {
-    use crate::constants::BitBoard;
-
     use super::*;
+
+    #[test]
+    fn test_is_connected() {
+        let x = make_board(
+            "\
+            0001000\
+            0011100\
+            0011111\
+            0000010\
+            0000010\
+            0000010\
+        ",
+        );
+
+        assert_eq!(is_connected(x, 1), true);
+        assert_eq!(is_connected(x, 38), true);
+        assert_eq!(is_connected(x, 0), false);
+
+
+        let x = make_board(
+            "\
+            0001000\
+            0011100\
+            0011101\
+            0000010\
+            0000010\
+            0000010\
+        ",
+        );
+
+        assert_eq!(is_connected(x, 1), false);
+        assert_eq!(is_connected(x, 38), false);
+    }
+
+    #[test]
+    fn test_unset_bit() {
+        let x = make_board(
+            "\
+            0001000\
+            0011100\
+            0011111\
+            0000010\
+            0000010\
+            0000010\
+        ",
+        );
+        assert_eq!(x, 0b000100000111000011111000001000000100000010);
+        assert_eq!(
+            unset_bit(x, 0, 0),
+            0b000100000111000011111000001000000100000010
+        );
+        assert_eq!(
+            unset_bit(x, 1, 0),
+            0b000100000111000011111000001000000100000000
+        );
+        assert_eq!(
+            unset_bit(x, 1, 1),
+            0b000100000111000011111000001000000000000010
+        );
+        assert_eq!(
+            unset_bit(x, 1, 2),
+            0b000100000111000011111000000000000100000010
+        );
+    }
 
     #[test]
     fn test_is_board_bit_set() {
@@ -80,6 +170,11 @@ mod test {
             0000010\
         ",
         );
+
+        assert_eq!(is_board_coord_set(x, -10, 0), false);
+        assert_eq!(is_board_coord_set(x, 10, 0), false);
+        assert_eq!(is_board_coord_set(x, 0, -20), false);
+        assert_eq!(is_board_coord_set(x, 0, 20), false);
 
         assert_eq!(is_board_coord_set(x, 0, 0), false);
         assert_eq!(is_board_coord_set(x, 1, 0), true);
