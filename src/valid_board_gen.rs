@@ -1,7 +1,15 @@
+use std::collections::HashSet;
+use std::fs::File;
+use std::io::prelude::*;
+use std::time::Instant;
+
 use crate::constants::{BitBoard, BOARD_HEIGHT, BOARD_WIDTH};
 
 // algorithm from https://stackoverflow.com/a/2075867/5460583
 pub fn generate_valid_boards() {
+    let mut file = File::create("connected_boards_test.dat").unwrap();
+    let mut connected_boards = Vec::<BitBoard>::new();
+
     // equals 12 ones in binary
     const START: i64 = 4096 - 1;
 
@@ -14,6 +22,7 @@ pub fn generate_valid_boards() {
     let mut k = 0;
     for i in 0..MAX {
         if is_connected(v, v.trailing_zeros() as i8) {
+            connected_boards.push(v);
             k += 1;
         }
 
@@ -24,8 +33,20 @@ pub fn generate_valid_boards() {
         if i % 100000000 == 0 {
             println!("{} {}/{} ({}%) {:042b}", j, k, i, k as f32 / i as f32, w);
             j += 1;
+
+            //if (j == 2) {
+            //    for ppp in 0..10 {
+            //        println!("{:042b}", connected_boards[ppp + 1000]);
+            //        print_bit_board(connected_boards[ppp + 1000]);
+            //        println!("");
+            //    }
+            //    file.write_all(&boards_to_bytes(&connected_boards));
+            //    return;
+            //}
         }
     }
+
+    file.write_all(&boards_to_bytes(&connected_boards));
 }
 
 pub fn is_connected(bit_board: i64, bit_index: i8) -> bool {
@@ -71,16 +92,123 @@ fn is_board_bit_set(bit_board: i64, bit_index: i8) -> bool {
 // <----------+
 //  x
 fn is_board_coord_set(bit_board: i64, x: i8, y: i8) -> bool {
-    if x < 0 || x > BOARD_WIDTH || y < 0 || y > BOARD_HEIGHT {
+    if x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT {
         return false;
     }
 
     is_board_bit_set(bit_board, BOARD_WIDTH * y + x)
 }
 
+pub fn print_bit_board(bit_board: BitBoard) {
+    let mut line = format!("{:042b}", bit_board);
+    for i in 0..6 {
+        let mut l = line.clone();
+        let (left, right) = l.split_at_mut(7);
+        line = right.to_string();
+        println!("{}", left);
+    }
+}
+
+pub fn bytes_to_boards(bytes: &Vec<u8>) -> Vec<BitBoard> {
+    let bit_boards_len = bytes.len() / 8; // if not aligned, some data is lost
+    let mut bit_boards = Vec::with_capacity(bit_boards_len);
+
+    for i in 0..bit_boards_len {
+        let bit_board = unsafe {
+            std::mem::transmute::<[u8; 8], BitBoard>([
+                bytes[i * 8 + 7],
+                bytes[i * 8 + 6],
+                bytes[i * 8 + 5],
+                bytes[i * 8 + 4],
+                bytes[i * 8 + 3],
+                bytes[i * 8 + 2],
+                bytes[i * 8 + 1],
+                bytes[i * 8],
+            ])
+        };
+
+        bit_boards.push(bit_board);
+    }
+
+    bit_boards
+}
+
+pub fn boards_to_bytes(bit_boards: &Vec<BitBoard>) -> Vec<u8> {
+    let mut bytes = Vec::with_capacity(8 * bit_boards.len());
+
+    for bit_board in bit_boards {
+        bytes.extend(&bit_board.to_be_bytes());
+    }
+
+    bytes
+}
+
+pub fn read_valid_boards() -> HashSet<BitBoard> {
+    let mut file = File::open("connected_boards.dat").unwrap();
+
+    let mut d = Vec::<u8>::new();
+    file.read_to_end(&mut d).unwrap();
+
+    let mut data = bytes_to_boards(&d);
+
+    data.iter().cloned().collect()
+}
+
+// TODO
+// called from this spot:
+// is_connected: 15509
+// contains: 4809
+//
+// if you copy this function to main.rs
+// is_connected: 2520
+// contains: 4777
+//
+// WHY??
+pub fn benchmark_valid_board_hashing() {
+    let mut connected_boards = read_valid_boards();
+
+    let x: BitBoard = 0b000100000111000011111000001000000100000010;
+
+    let now = Instant::now();
+    for i in 0..100000000 {
+        let a = if now.elapsed().as_millis() % 2 == 0 {
+            1
+        } else {
+            0
+        };
+        is_connected(x + a, 1);
+    }
+    println!("is_connected: {}", now.elapsed().as_millis());
+
+    let now = Instant::now();
+    for i in 0..100000000 {
+        let a = if now.elapsed().as_millis() % 2 == 0 {
+            1
+        } else {
+            0
+        };
+        connected_boards.contains(&(x + a));
+    }
+    println!("contains: {}", now.elapsed().as_millis());
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
+
+    #[test]
+    fn test_boards_to_bytes() {
+        let mut x = Vec::<BitBoard>::new();
+        x.push(5345345345234243);
+        x.push(143954759751381111);
+
+        let a = boards_to_bytes(&x);
+        let b = bytes_to_boards(&a);
+
+        assert_eq!(a.len(), 16);
+        assert_eq!(b.len(), 2);
+        assert_eq!(x, b);
+    }
 
     #[test]
     fn test_is_connected() {
@@ -99,7 +227,6 @@ mod test {
         assert_eq!(is_connected(x, 38), true);
         assert_eq!(is_connected(x, 0), false);
 
-
         let x = make_board(
             "\
             0001000\
@@ -113,6 +240,19 @@ mod test {
 
         assert_eq!(is_connected(x, 1), false);
         assert_eq!(is_connected(x, 38), false);
+
+        let x = make_board(
+            "\
+            0000000\
+            0000000\
+            0000000\
+            0000101\
+            1111110\
+            1001011\
+        ",
+        );
+
+        assert_eq!(is_connected(x, 0), false);
     }
 
     #[test]
