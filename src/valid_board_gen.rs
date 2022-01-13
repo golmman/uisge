@@ -49,6 +49,10 @@ pub fn generate_valid_boards() {
     file.write_all(&boards_to_bytes(&connected_boards));
 }
 
+pub fn make_board(s: &str) -> BitBoard {
+    i64::from_str_radix(s, 2).unwrap()
+}
+
 pub fn is_connected(bit_board: i64, bit_index: i8) -> bool {
     let x = bit_index % BOARD_WIDTH;
     let y = bit_index / BOARD_WIDTH;
@@ -363,9 +367,5 @@ mod test {
         assert_eq!(is_board_coord_set(x, 4, 5), false);
         assert_eq!(is_board_coord_set(x, 5, 5), false);
         assert_eq!(is_board_coord_set(x, 6, 5), false);
-    }
-
-    fn make_board(s: &str) -> BitBoard {
-        i64::from_str_radix(s, 2).unwrap()
     }
 }
