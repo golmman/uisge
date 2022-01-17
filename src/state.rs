@@ -1,7 +1,33 @@
 use std::fmt::Display;
 
-use crate::constants::{BitBoard, BOARD_HEIGHT, BOARD_TOTAL_PIECES, BOARD_WIDTH};
+use crate::constants::{BitBoard, BoardIndex, BOARD_HEIGHT, BOARD_TOTAL_PIECES, BOARD_WIDTH};
 use crate::valid_board_gen::make_board;
+
+pub enum PlayerColor {
+    Black,
+    White,
+}
+
+pub struct GameState {
+    pub board: Board,
+    pub active_player: PlayerColor,
+}
+
+impl GameState {
+    pub fn new() -> Self {
+        let board = Board::new();
+        let active_player = PlayerColor::White;
+
+        Self {
+            board,
+            active_player,
+        }
+    }
+
+    pub fn get_active_pieces() -> (Vec<BoardIndex>, Vec<BoardIndex>) {
+        (Vec::new(), Vec::new())
+    }
+}
 
 // 00 01 02 03 04 05 06
 // 07 08 09 10 11 12 13
@@ -9,14 +35,13 @@ use crate::valid_board_gen::make_board;
 // 21 22 23 24 25 26 27
 // 28 29 30 31 32 33 34
 // 35 36 37 38 39 40 41
-
 pub struct Board {
     piece_bits: BitBoard,
 
-    black_kings: Vec<i8>,
-    black_pawns: Vec<i8>,
-    white_kings: Vec<i8>,
-    white_pawns: Vec<i8>,
+    black_kings: Vec<BoardIndex>,
+    black_pawns: Vec<BoardIndex>,
+    white_kings: Vec<BoardIndex>,
+    white_pawns: Vec<BoardIndex>,
 }
 
 impl Display for Board {

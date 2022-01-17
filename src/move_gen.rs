@@ -1,13 +1,17 @@
-use crate::constants::BitBoard;
+use crate::constants::{BitBoard, BoardIndex};
+use crate::state::GameState;
 
 // note that 'move' is a rust keyword, so when intended as variable 'mov' is used instead here
 pub struct Move {
-    from: i8,
-    to: i8,
+    from: BoardIndex,
+    to: BoardIndex,
 }
 
-pub fn generate_moves(bit_board: BitBoard) -> Vec<Move> {
+pub fn generate_moves(game_state: &GameState) -> Vec<Move> {
     let moves = Vec::<Move>::new();
+    let board = &game_state.board;
+
+    //for 
 
     moves
 }
