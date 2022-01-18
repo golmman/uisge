@@ -4,3 +4,4 @@ pub const BOARD_TOTAL_PIECES: u8 = BOARD_HEIGHT * BOARD_WIDTH;
 
 pub type BitBoard = u64;
 pub type BoardIndex = u8;
+pub type BoardIndexList = [BoardIndex; 8];

@@ -13,9 +13,4 @@ fn main() {
     let game_state = GameState::new();
 
     println!("{}", game_state.board);
-
-    let now = Instant::now();
-    let zero: BoardIndex = now.elapsed().as_secs() as BoardIndex;
-
-    println!("{}", zero.wrapping_sub(10));
 }
