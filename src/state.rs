@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
 use crate::constants::{BitBoard, BoardIndex, BOARD_HEIGHT, BOARD_TOTAL_PIECES, BOARD_WIDTH};
+use crate::piece_list::PieceList;
 use crate::valid_board_gen::make_board;
 
 pub enum PlayerColor {
@@ -38,10 +39,10 @@ impl GameState {
 pub struct Board {
     piece_bits: BitBoard,
 
-    black_kings: Vec<BoardIndex>,
-    black_pawns: Vec<BoardIndex>,
-    white_kings: Vec<BoardIndex>,
-    white_pawns: Vec<BoardIndex>,
+    black_kings: PieceList,
+    black_pawns: PieceList,
+    white_kings: PieceList,
+    white_pawns: PieceList,
 }
 
 impl Display for Board {
@@ -59,17 +60,18 @@ impl Display for Board {
 
         let mut piece =
             vec![format!("{}{}{}", BLACK_ON_MAGENTA, "- ", RESET); BOARD_TOTAL_PIECES as usize];
-        for i in &self.black_kings {
-            piece[*i as usize] = format!("{}{}{}", BLACK_ON_MAGENTA, "W ", RESET);
+
+        for i in self.black_kings {
+            piece[i as usize] = format!("{}{}{}", BLACK_ON_MAGENTA, "W ", RESET);
         }
-        for i in &self.black_pawns {
-            piece[*i as usize] = format!("{}{}{}", BLACK_ON_MAGENTA, "o ", RESET);
+        for i in self.black_pawns {
+            piece[i as usize] = format!("{}{}{}", BLACK_ON_MAGENTA, "o ", RESET);
         }
-        for i in &self.white_kings {
-            piece[*i as usize] = format!("{}{}{}", WHITE_ON_MAGENTA, "W ", RESET);
+        for i in self.white_kings {
+            piece[i as usize] = format!("{}{}{}", WHITE_ON_MAGENTA, "W ", RESET);
         }
-        for i in &self.white_pawns {
-            piece[*i as usize] = format!("{}{}{}", WHITE_ON_MAGENTA, "o ", RESET);
+        for i in self.white_pawns {
+            piece[i as usize] = format!("{}{}{}", WHITE_ON_MAGENTA, "o ", RESET);
         }
 
         for i in 0..BOARD_TOTAL_PIECES {
@@ -106,11 +108,11 @@ impl Board {
             ",
         );
 
-        let black_kings = Vec::new();
-        let black_pawns = vec![23, 24, 25, 26, 31, 32];
+        let black_kings = PieceList::new();
+        let black_pawns = PieceList::from(vec![23, 24, 25, 26, 31, 32]);
 
-        let white_kings = Vec::new();
-        let white_pawns = vec![9, 10, 15, 16, 17, 18];
+        let white_kings = PieceList::new();
+        let white_pawns = PieceList::from(vec![9, 10, 15, 16, 17, 18]);
 
         Self {
             piece_bits,
