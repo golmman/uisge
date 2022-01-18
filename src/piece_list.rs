@@ -1,10 +1,10 @@
 use crate::constants::BitBoard;
 
-const END_OF_LIST: u8 = 0xff;
+const END_OF_LIST: i8 = -1;
 
 pub struct PieceListIterator {
     index: usize,
-    pieces: [u8; 8],
+    pieces: [i8; 8],
 }
 
 impl PieceListIterator {
@@ -17,7 +17,7 @@ impl PieceListIterator {
 }
 
 impl Iterator for PieceListIterator {
-    type Item = u8;
+    type Item = i8;
 
     fn next(&mut self) -> Option<Self::Item> {
         let piece = self.pieces[self.index];
@@ -33,7 +33,7 @@ impl Iterator for PieceListIterator {
 
 #[derive(Clone, Copy)]
 pub struct PieceList {
-    pieces: u64,
+    pieces: BitBoard,
 }
 
 impl PieceList {
@@ -41,13 +41,15 @@ impl PieceList {
         Self { pieces: END_OF_LIST.into() }
     }
 
-    pub fn to_array(&self) -> [u8; 8] {
-        self.pieces.to_le_bytes()
+    pub fn to_array(&self) -> [i8; 8] {
+        let bytes = self.pieces.to_le_bytes();
+
+        *unsafe { &*(&bytes as *const _ as *const [i8; 8]) }
     }
 }
 
 impl IntoIterator for PieceList {
-    type Item = u8;
+    type Item = i8;
     type IntoIter = PieceListIterator;
 
     fn into_iter(self) -> Self::IntoIter {
@@ -58,7 +60,7 @@ impl IntoIterator for PieceList {
 impl From<BitBoard> for PieceList {
     fn from(bit_board: BitBoard) -> Self {
         let mut piece_list = PieceList::new();
-        piece_list.pieces = bit_board as u64;
+        piece_list.pieces = bit_board;
 
         piece_list
     }
@@ -66,16 +68,17 @@ impl From<BitBoard> for PieceList {
 
 #[cfg(test)]
 mod test {
+    use crate::constants::BoardIndex;
+
     use super::*;
     #[test]
     fn test_iterate_trivial() {
         let piece_list = PieceList::new();
 
-        let mut piece_vec = Vec::<i32>::new();
+        let mut piece_vec = Vec::<BoardIndex>::new();
 
         for piece in piece_list {
-            println!("{}", piece);
-            piece_vec.push(piece as i32);
+            piece_vec.push(piece as BoardIndex);
         }
 
         assert_eq!(piece_vec, vec![]);
@@ -83,27 +86,25 @@ mod test {
 
     #[test]
     fn test_iterate_simple() {
-        let piece_list = PieceList::from(0xff01020407fe7f);
+        let piece_list = PieceList::from(0xff01020407217f);
 
-        let mut piece_vec = Vec::<i32>::new();
+        let mut piece_vec = Vec::<BoardIndex>::new();
 
         for piece in piece_list {
-            println!("{}", piece);
-            piece_vec.push(piece as i32);
+            piece_vec.push(piece as BoardIndex);
         }
 
-        assert_eq!(piece_vec, vec![127, 254, 7, 4, 2, 1]);
+        assert_eq!(piece_vec, vec![127, 33, 7, 4, 2, 1]);
     }
 
     #[test]
     fn test_iterate_early_return() {
         let piece_list = PieceList::from(0xff010204ff0708);
 
-        let mut piece_vec = Vec::<i32>::new();
+        let mut piece_vec = Vec::<BoardIndex>::new();
 
         for piece in piece_list {
-            println!("{}", piece);
-            piece_vec.push(piece as i32);
+            piece_vec.push(piece as BoardIndex);
         }
 
         assert_eq!(piece_vec, vec![8, 7]);
