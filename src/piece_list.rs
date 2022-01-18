@@ -1,10 +1,10 @@
-use crate::constants::BitBoard;
+use crate::constants::{BitBoard, BoardIndex};
 
-const END_OF_LIST: i8 = -1;
+const END_OF_LIST: BoardIndex = 0xff;
 
 pub struct PieceListIterator {
     index: usize,
-    pieces: [i8; 8],
+    pieces: [BoardIndex; 8],
 }
 
 impl PieceListIterator {
@@ -17,7 +17,7 @@ impl PieceListIterator {
 }
 
 impl Iterator for PieceListIterator {
-    type Item = i8;
+    type Item = BoardIndex;
 
     fn next(&mut self) -> Option<Self::Item> {
         let piece = self.pieces[self.index];
@@ -38,18 +38,20 @@ pub struct PieceList {
 
 impl PieceList {
     pub fn new() -> Self {
-        Self { pieces: END_OF_LIST.into() }
+        Self {
+            pieces: END_OF_LIST.into(),
+        }
     }
 
-    pub fn to_array(&self) -> [i8; 8] {
+    pub fn to_array(&self) -> [BoardIndex; 8] {
         let bytes = self.pieces.to_le_bytes();
 
-        *unsafe { &*(&bytes as *const _ as *const [i8; 8]) }
+        *unsafe { &*(&bytes as *const _ as *const [BoardIndex; 8]) }
     }
 }
 
 impl IntoIterator for PieceList {
-    type Item = i8;
+    type Item = BoardIndex;
     type IntoIter = PieceListIterator;
 
     fn into_iter(self) -> Self::IntoIter {

@@ -3,7 +3,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::time::Instant;
 
-use crate::constants::{BitBoard, BOARD_HEIGHT, BOARD_WIDTH};
+use crate::constants::{BitBoard, BoardIndex, BOARD_HEIGHT, BOARD_WIDTH};
 
 // algorithm from https://stackoverflow.com/a/2075867/5460583
 pub fn generate_valid_boards() {
@@ -11,24 +11,24 @@ pub fn generate_valid_boards() {
     let mut connected_boards = Vec::<BitBoard>::new();
 
     // equals 12 ones in binary
-    const START: i64 = 4096 - 1;
+    const START: BitBoard = 4096 - 1;
 
     // equals 42 choose 12, i.e. the number of ways to choose 12 elements (uisge pieces) from a set of 42 elements (board tiles)
-    const MAX: i64 = 11058116888;
+    const MAX: BitBoard = 11058116888;
 
     let mut v = START;
 
     let mut j = 0;
     let mut k = 0;
     for i in 0..MAX {
-        if is_connected(v, v.trailing_zeros() as i8) {
+        if is_connected(v, v.trailing_zeros() as BoardIndex) {
             connected_boards.push(v);
             k += 1;
         }
 
-        let t = v | (v - 1);
+        let t = (v | (v - 1)) as i64;
         let w = (t + 1) | (((!t & -!t) - 1) >> (v.trailing_zeros() + 1));
-        v = w;
+        v = w as u64;
 
         if i % 100000000 == 0 {
             println!("{} {}/{} ({}%) {:042b}", j, k, i, k as f32 / i as f32, w);
@@ -50,17 +50,17 @@ pub fn generate_valid_boards() {
 }
 
 pub fn make_board(s: &str) -> BitBoard {
-    i64::from_str_radix(s, 2).unwrap()
+    BitBoard::from_str_radix(s, 2).unwrap()
 }
 
-pub fn is_connected(bit_board: i64, bit_index: i8) -> bool {
+pub fn is_connected(bit_board: BitBoard, bit_index: BoardIndex) -> bool {
     let x = bit_index % BOARD_WIDTH;
     let y = bit_index / BOARD_WIDTH;
 
     flood_fill(bit_board, x, y) == 0
 }
 
-fn flood_fill(bit_board: BitBoard, x: i8, y: i8) -> BitBoard {
+fn flood_fill(bit_board: BitBoard, x: BoardIndex, y: BoardIndex) -> BitBoard {
     let mut bb = bit_board;
 
     if !is_board_coord_set(bb, x, y) {
@@ -68,20 +68,20 @@ fn flood_fill(bit_board: BitBoard, x: i8, y: i8) -> BitBoard {
     }
 
     bb = unset_bit(bb, x, y);
-    bb = flood_fill(bb, x - 1, y);
+    bb = flood_fill(bb, x.wrapping_sub(1), y);
     bb = flood_fill(bb, x + 1, y);
-    bb = flood_fill(bb, x, y - 1);
+    bb = flood_fill(bb, x, y.wrapping_sub(1));
     bb = flood_fill(bb, x, y + 1);
 
     bb
 }
 
-fn unset_bit(bit_board: BitBoard, x: i8, y: i8) -> BitBoard {
+fn unset_bit(bit_board: BitBoard, x: BoardIndex, y: BoardIndex) -> BitBoard {
     let mask = 1 << (BOARD_WIDTH * y + x);
     bit_board & !mask
 }
 
-fn is_board_bit_set(bit_board: i64, bit_index: i8) -> bool {
+fn is_board_bit_set(bit_board: BitBoard, bit_index: BoardIndex) -> bool {
     bit_board & 1 << bit_index != 0
 }
 
@@ -95,8 +95,8 @@ fn is_board_bit_set(bit_board: i64, bit_index: i8) -> bool {
 //   0000010  |
 // <----------+
 //  x
-fn is_board_coord_set(bit_board: i64, x: i8, y: i8) -> bool {
-    if x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT {
+fn is_board_coord_set(bit_board: BitBoard, x: BoardIndex, y: BoardIndex) -> bool {
+    if x >= BOARD_WIDTH || y >= BOARD_HEIGHT {
         return false;
     }
 
@@ -315,9 +315,9 @@ mod test {
         ",
         );
 
-        assert_eq!(is_board_coord_set(x, -10, 0), false);
+        assert_eq!(is_board_coord_set(x, 0u8.wrapping_sub(10), 0), false);
         assert_eq!(is_board_coord_set(x, 10, 0), false);
-        assert_eq!(is_board_coord_set(x, 0, -20), false);
+        assert_eq!(is_board_coord_set(x, 0, 0u8.wrapping_sub(20)), false);
         assert_eq!(is_board_coord_set(x, 0, 20), false);
 
         assert_eq!(is_board_coord_set(x, 0, 0), false);

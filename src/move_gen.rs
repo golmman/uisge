@@ -11,7 +11,7 @@ pub fn generate_moves(game_state: &GameState) -> Vec<Move> {
     let moves = Vec::<Move>::new();
     let board = &game_state.board;
 
-    //for 
+    //for
 
     moves
 }
