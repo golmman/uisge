@@ -2,24 +2,35 @@ use crate::constants::{BitBoard, BoardIndex};
 use crate::state::GameState;
 
 // note that 'move' is a rust keyword, so when intended as variable 'mov' is used instead here
+#[derive(Clone, Copy)]
 pub struct Move {
     from: BoardIndex,
     to: BoardIndex,
 }
 
-pub fn generate_moves(game_state: &GameState) -> Vec<Move> {
-    let moves = Vec::<Move>::new();
-    let board = &game_state.board;
+//pub fn generate_king_moves(game_state: &GameState,
 
-    //for
+impl GameState {
+    pub fn generate_moves(&self) -> Vec<Move> {
+        let mut moves = Vec::<Move>::new();
+        let board = &self.board;
 
-    moves
-}
+        let (kings, pawns) = self.get_active_pieces();
 
-pub fn make_move(bit_board: BitBoard, mov: Move) -> BitBoard {
-    1
-}
+        for king in kings {
+            self.append_king_moves(&mut moves, king);
+        }
 
-pub fn unmake_move(bit_board: BitBoard, mov: Move) -> BitBoard {
-    1
+        moves
+    }
+
+    fn append_king_moves(&self, moves: &mut Vec<Move>, king: BoardIndex) {}
+
+    pub fn make_move(&mut self, mov: Move) -> BitBoard {
+        1
+    }
+
+    pub fn unmake_move(&mut self, mov: Move) -> BitBoard {
+        1
+    }
 }

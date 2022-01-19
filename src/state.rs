@@ -25,8 +25,11 @@ impl GameState {
         }
     }
 
-    pub fn get_active_pieces() -> (Vec<BoardIndex>, Vec<BoardIndex>) {
-        (Vec::new(), Vec::new())
+    pub fn get_active_pieces(&self) -> (PieceList, PieceList) {
+        match self.active_player {
+            PlayerColor::Black => (self.board.black_kings, self.board.black_pawns),
+            PlayerColor::White => (self.board.white_kings, self.board.white_pawns),
+        }
     }
 }
 
