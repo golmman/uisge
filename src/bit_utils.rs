@@ -77,6 +77,11 @@ pub fn set_board_bit(bit_board: BitBoard, x: BoardIndex, y: BoardIndex) -> BitBo
     bit_board | 1 << (BOARD_WIDTH * y + x)
 }
 
+pub fn jump_bit(bit_board: BitBoard, from: BoardIndex, to: BoardIndex) -> BitBoard {
+    let from_mask = 1 << from;
+    (bit_board | 1 << to) & !from_mask
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

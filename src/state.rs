@@ -40,12 +40,12 @@ impl GameState {
 // 28 29 30 31 32 33 34
 // 35 36 37 38 39 40 41
 pub struct Board {
-    piece_bits: BitBoard,
+    pub piece_bits: BitBoard,
 
-    black_kings: PieceList,
-    black_pawns: PieceList,
-    white_kings: PieceList,
-    white_pawns: PieceList,
+    pub black_kings: PieceList,
+    pub black_pawns: PieceList,
+    pub white_kings: PieceList,
+    pub white_pawns: PieceList,
 }
 
 impl Display for Board {
@@ -58,7 +58,7 @@ impl Display for Board {
 
         text.push_str(&format!(
             "{}{}{}\n",
-            BLACK_ON_MAGENTA, " ***************** ", RESET
+            BLACK_ON_MAGENTA, "   a b c d e f g   ", RESET
         ));
 
         let mut piece =
@@ -79,19 +79,19 @@ impl Display for Board {
 
         for i in 0..BOARD_TOTAL_PIECES {
             if i % BOARD_WIDTH == 0 {
-                text.push_str(&format!("{}{}{}", BLACK_ON_MAGENTA, " * ", RESET));
+                text.push_str(&format!("{} {} {}", BLACK_ON_MAGENTA, i / BOARD_WIDTH + 1, RESET));
             }
 
             text.push_str(&piece[i as usize]);
 
             if (i + 1) % BOARD_WIDTH == 0 {
-                text.push_str(&format!("{}{}{}\n", BLACK_ON_MAGENTA, "* ", RESET));
+                text.push_str(&format!("{}{} {}\n", BLACK_ON_MAGENTA, i / BOARD_WIDTH + 1, RESET));
             }
         }
 
         text.push_str(&format!(
             "{}{}{}\n",
-            BLACK_ON_MAGENTA, " ***************** ", RESET
+            BLACK_ON_MAGENTA, "   a b c d e f g   ", RESET
         ));
 
         write!(f, "{}", text)

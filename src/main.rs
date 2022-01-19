@@ -1,7 +1,7 @@
 use std::time::Instant;
 
 use crate::bit_board_gen::print_bit_board_code;
-use crate::bit_utils::{get_bit_indices, print_bit_board, make_board};
+use crate::bit_utils::{get_bit_indices, make_board, print_bit_board};
 use crate::constants::BoardIndex;
 use crate::state::{Board, GameState};
 
@@ -18,19 +18,10 @@ fn main() {
 
     println!("{}", game_state.board);
 
-    println!("{}", 0u64.trailing_zeros());
+    let moves = game_state.generate_moves();
 
-    println!("{:?}", get_bit_indices(0b000001111011000000001));
-
-    print_bit_board_code();
-
-    let x = make_board([
-        [0, 0, 0, 1, 0, 0, 0],
-        [0, 0, 1, 1, 1, 0, 0],
-        [0, 0, 1, 1, 1, 1, 1],
-        [0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 0, 1, 0],
-    ]);
-    print_bit_board(x);
+    // [9->7, 9->11, 10->8, 10->12, 15->1, 15->29, 16->2, 16->14, 16->30, 17->3, 17->19, 18->4, 18->20]
+    // [      9->11, 10->8,                        16->2, 16->14, 16->30, 17->3, 17->19]
+    // [      9->11, 10->8,                                               17->3, 17->19]
+    println!("{:?}", moves);
 }
