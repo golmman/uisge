@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::prelude::*;
 use std::time::Instant;
 
+use crate::bit_utils::is_board_coord_set;
 use crate::constants::{BitBoard, BoardIndex, BOARD_HEIGHT, BOARD_WIDTH};
 
 // algorithm from https://stackoverflow.com/a/2075867/5460583
@@ -79,38 +80,6 @@ fn flood_fill(bit_board: BitBoard, x: BoardIndex, y: BoardIndex) -> BitBoard {
 fn unset_bit(bit_board: BitBoard, x: BoardIndex, y: BoardIndex) -> BitBoard {
     let mask = 1 << (BOARD_WIDTH * y + x);
     bit_board & !mask
-}
-
-fn is_board_bit_set(bit_board: BitBoard, bit_index: BoardIndex) -> bool {
-    bit_board & 1 << bit_index != 0
-}
-
-// Note that the coordination system for a binary string looks like this
-//            ^
-//   0001000\ | y
-//   0011100\ |
-//   0011111\ |
-//   0000010\ |
-//   0000010\ |
-//   0000010  |
-// <----------+
-//  x
-fn is_board_coord_set(bit_board: BitBoard, x: BoardIndex, y: BoardIndex) -> bool {
-    if x >= BOARD_WIDTH || y >= BOARD_HEIGHT {
-        return false;
-    }
-
-    is_board_bit_set(bit_board, BOARD_WIDTH * y + x)
-}
-
-pub fn print_bit_board(bit_board: BitBoard) {
-    let mut line = format!("{:042b}", bit_board);
-    for i in 0..6 {
-        let mut l = line.clone();
-        let (left, right) = l.split_at_mut(7);
-        line = right.to_string();
-        println!("{}", left);
-    }
 }
 
 pub fn bytes_to_boards(bytes: &Vec<u8>) -> Vec<BitBoard> {
@@ -288,84 +257,5 @@ mod test {
             unset_bit(x, 1, 2),
             0b000100000111000011111000000000000100000010
         );
-    }
-
-    #[test]
-    fn test_is_board_bit_set() {
-        let x = 0b0000000111001;
-        assert_eq!(is_board_bit_set(x, 0), true);
-        assert_eq!(is_board_bit_set(x, 1), false);
-        assert_eq!(is_board_bit_set(x, 2), false);
-        assert_eq!(is_board_bit_set(x, 3), true);
-        assert_eq!(is_board_bit_set(x, 4), true);
-        assert_eq!(is_board_bit_set(x, 5), true);
-        assert_eq!(is_board_bit_set(x, 6), false);
-    }
-
-    #[test]
-    fn test_is_board_coord_set() {
-        let x = make_board(
-            "\
-            0001000\
-            0011100\
-            0011111\
-            0000010\
-            0000010\
-            0000010\
-        ",
-        );
-
-        assert_eq!(is_board_coord_set(x, 0u8.wrapping_sub(10), 0), false);
-        assert_eq!(is_board_coord_set(x, 10, 0), false);
-        assert_eq!(is_board_coord_set(x, 0, 0u8.wrapping_sub(20)), false);
-        assert_eq!(is_board_coord_set(x, 0, 20), false);
-
-        assert_eq!(is_board_coord_set(x, 0, 0), false);
-        assert_eq!(is_board_coord_set(x, 1, 0), true);
-        assert_eq!(is_board_coord_set(x, 2, 0), false);
-        assert_eq!(is_board_coord_set(x, 3, 0), false);
-        assert_eq!(is_board_coord_set(x, 4, 0), false);
-        assert_eq!(is_board_coord_set(x, 5, 0), false);
-        assert_eq!(is_board_coord_set(x, 6, 0), false);
-
-        assert_eq!(is_board_coord_set(x, 0, 1), false);
-        assert_eq!(is_board_coord_set(x, 1, 1), true);
-        assert_eq!(is_board_coord_set(x, 2, 1), false);
-        assert_eq!(is_board_coord_set(x, 3, 1), false);
-        assert_eq!(is_board_coord_set(x, 4, 1), false);
-        assert_eq!(is_board_coord_set(x, 5, 1), false);
-        assert_eq!(is_board_coord_set(x, 6, 1), false);
-
-        assert_eq!(is_board_coord_set(x, 0, 2), false);
-        assert_eq!(is_board_coord_set(x, 1, 2), true);
-        assert_eq!(is_board_coord_set(x, 2, 2), false);
-        assert_eq!(is_board_coord_set(x, 3, 2), false);
-        assert_eq!(is_board_coord_set(x, 4, 2), false);
-        assert_eq!(is_board_coord_set(x, 5, 2), false);
-        assert_eq!(is_board_coord_set(x, 6, 2), false);
-
-        assert_eq!(is_board_coord_set(x, 0, 3), true);
-        assert_eq!(is_board_coord_set(x, 1, 3), true);
-        assert_eq!(is_board_coord_set(x, 2, 3), true);
-        assert_eq!(is_board_coord_set(x, 3, 3), true);
-        assert_eq!(is_board_coord_set(x, 4, 3), true);
-        assert_eq!(is_board_coord_set(x, 5, 3), false);
-        assert_eq!(is_board_coord_set(x, 6, 3), false);
-
-        assert_eq!(is_board_coord_set(x, 0, 4), false);
-        assert_eq!(is_board_coord_set(x, 1, 4), false);
-        assert_eq!(is_board_coord_set(x, 2, 4), true);
-        assert_eq!(is_board_coord_set(x, 3, 4), true);
-        assert_eq!(is_board_coord_set(x, 4, 4), true);
-        assert_eq!(is_board_coord_set(x, 5, 4), false);
-        assert_eq!(is_board_coord_set(x, 6, 4), false);
-
-        assert_eq!(is_board_coord_set(x, 0, 5), false);
-        assert_eq!(is_board_coord_set(x, 1, 5), false);
-        assert_eq!(is_board_coord_set(x, 2, 5), false);
-        assert_eq!(is_board_coord_set(x, 3, 5), true);
-        assert_eq!(is_board_coord_set(x, 4, 5), false);
-        assert_eq!(is_board_coord_set(x, 5, 5), false);
-        assert_eq!(is_board_coord_set(x, 6, 5), false);
     }
 }
