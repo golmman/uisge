@@ -1,7 +1,10 @@
 use crate::bit_board_gen::print_bit_board_code;
-use crate::bit_utils::{get_bit_indices, make_board, print_bit_board};
+use crate::bit_utils::get_bit_indices;
+use crate::bit_utils::make_board;
+use crate::bit_utils::print_bit_board;
 use crate::constants::BoardIndex;
-use crate::state::{Board, GameState};
+use crate::state::Board;
+use crate::state::GameState;
 
 mod bit_board_gen;
 mod bit_utils;

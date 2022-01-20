@@ -1,0 +1,8 @@
+edition = "2021"
+newline_style = "Unix"
+chain_width = 40
+
+# nightly
+unstable_features = true
+imports_granularity = "Item"
+group_imports = "StdExternalCrate"

@@ -1,6 +1,8 @@
-use std::fmt::{Debug, Display};
+use std::fmt::Debug;
+use std::fmt::Display;
 
-use crate::constants::{BoardIndex, BoardIndexList};
+use crate::constants::BoardIndex;
+use crate::constants::BoardIndexList;
 
 const END_OF_LIST: BoardIndex = 0xff;
 const EMPTY_PIECE_LIST: u64 = 0xffffffffffffffff;
@@ -124,9 +126,8 @@ impl Debug for PieceList {
 
 #[cfg(test)]
 mod test {
-    use crate::constants::BoardIndex;
-
     use super::*;
+    use crate::constants::BoardIndex;
     #[test]
     fn test_iterate_trivial() {
         let piece_list = PieceList::new();

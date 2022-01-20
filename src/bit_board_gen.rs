@@ -1,5 +1,7 @@
-use crate::bit_utils::{print_bit_board, set_board_bit};
-use crate::constants::{BOARD_HEIGHT, BOARD_WIDTH};
+use crate::bit_utils::print_bit_board;
+use crate::bit_utils::set_board_bit;
+use crate::constants::BOARD_HEIGHT;
+use crate::constants::BOARD_WIDTH;
 
 pub fn print_bit_board_code() {
     print_king_moves();

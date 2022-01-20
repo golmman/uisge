@@ -1,4 +1,7 @@
-use crate::constants::{BitBoard, BoardIndex, BOARD_HEIGHT, BOARD_WIDTH};
+use crate::constants::BitBoard;
+use crate::constants::BoardIndex;
+use crate::constants::BOARD_HEIGHT;
+use crate::constants::BOARD_WIDTH;
 
 pub const fn make_board(bits: [[u8; 7]; 6]) -> BitBoard {
     let mut board: BitBoard = 0;

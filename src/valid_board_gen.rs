@@ -4,7 +4,10 @@ use std::io::prelude::*;
 use std::time::Instant;
 
 use crate::bit_utils::is_board_coord_set;
-use crate::constants::{BitBoard, BoardIndex, BOARD_HEIGHT, BOARD_WIDTH};
+use crate::constants::BitBoard;
+use crate::constants::BoardIndex;
+use crate::constants::BOARD_HEIGHT;
+use crate::constants::BOARD_WIDTH;
 
 // algorithm from https://stackoverflow.com/a/2075867/5460583
 #[allow(unused)]

@@ -1,6 +1,10 @@
 use std::fmt::Display;
 
-use crate::constants::{BitBoard, BoardIndex, BOARD_HEIGHT, BOARD_TOTAL_PIECES, BOARD_WIDTH};
+use crate::constants::BitBoard;
+use crate::constants::BoardIndex;
+use crate::constants::BOARD_HEIGHT;
+use crate::constants::BOARD_TOTAL_PIECES;
+use crate::constants::BOARD_WIDTH;
 use crate::piece_list::PieceList;
 use crate::valid_board_gen::make_board;
 
