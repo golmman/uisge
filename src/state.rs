@@ -4,31 +4,26 @@ use crate::constants::{BitBoard, BoardIndex, BOARD_HEIGHT, BOARD_TOTAL_PIECES, B
 use crate::piece_list::PieceList;
 use crate::valid_board_gen::make_board;
 
-pub enum PlayerColor {
-    Black,
-    White,
-}
-
 pub struct GameState {
     pub board: Board,
-    pub active_player: PlayerColor,
+    pub is_active_player_white: bool,
 }
 
 impl GameState {
     pub fn new() -> Self {
         let board = Board::new();
-        let active_player = PlayerColor::White;
+        let is_active_player_white = true;
 
         Self {
             board,
-            active_player,
+            is_active_player_white,
         }
     }
 
     pub fn get_active_pieces(&self) -> (PieceList, PieceList) {
-        match self.active_player {
-            PlayerColor::Black => (self.board.black_kings, self.board.black_pawns),
-            PlayerColor::White => (self.board.white_kings, self.board.white_pawns),
+        match self.is_active_player_white {
+            true => (self.board.white_kings, self.board.white_pawns),
+            false => (self.board.black_kings, self.board.black_pawns),
         }
     }
 }
@@ -79,13 +74,23 @@ impl Display for Board {
 
         for i in 0..BOARD_TOTAL_PIECES {
             if i % BOARD_WIDTH == 0 {
-                text.push_str(&format!("{} {} {}", BLACK_ON_MAGENTA, i / BOARD_WIDTH + 1, RESET));
+                text.push_str(&format!(
+                    "{} {} {}",
+                    BLACK_ON_MAGENTA,
+                    i / BOARD_WIDTH + 1,
+                    RESET
+                ));
             }
 
             text.push_str(&piece[i as usize]);
 
             if (i + 1) % BOARD_WIDTH == 0 {
-                text.push_str(&format!("{}{} {}\n", BLACK_ON_MAGENTA, i / BOARD_WIDTH + 1, RESET));
+                text.push_str(&format!(
+                    "{}{} {}\n",
+                    BLACK_ON_MAGENTA,
+                    i / BOARD_WIDTH + 1,
+                    RESET
+                ));
             }
         }
 

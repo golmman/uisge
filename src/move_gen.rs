@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 
 use crate::bit_utils::{get_bit_indices, is_board_bit_set, jump_bit};
-use crate::constants::{BitBoard, BoardIndex, JUMP_MOVES, BOARD_WIDTH};
+use crate::constants::{BitBoard, BoardIndex, BOARD_WIDTH, JUMP_MOVES};
 use crate::state::GameState;
 use crate::valid_board_gen::is_connected;
 

@@ -1,5 +1,3 @@
-use std::time::Instant;
-
 use crate::bit_board_gen::print_bit_board_code;
 use crate::bit_utils::{get_bit_indices, make_board, print_bit_board};
 use crate::constants::BoardIndex;

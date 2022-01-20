@@ -7,6 +7,7 @@ use crate::bit_utils::is_board_coord_set;
 use crate::constants::{BitBoard, BoardIndex, BOARD_HEIGHT, BOARD_WIDTH};
 
 // algorithm from https://stackoverflow.com/a/2075867/5460583
+#[allow(unused)]
 pub fn generate_valid_boards() {
     let mut file = File::create("connected_boards_test.dat").unwrap();
     let mut connected_boards = Vec::<BitBoard>::new();
@@ -47,7 +48,8 @@ pub fn generate_valid_boards() {
         }
     }
 
-    file.write_all(&boards_to_bytes(&connected_boards));
+    file.write_all(&boards_to_bytes(&connected_boards))
+        .unwrap();
 }
 
 pub fn make_board(s: &str) -> BitBoard {
@@ -106,6 +108,7 @@ pub fn bytes_to_boards(bytes: &Vec<u8>) -> Vec<BitBoard> {
     bit_boards
 }
 
+#[allow(unused)]
 pub fn boards_to_bytes(bit_boards: &Vec<BitBoard>) -> Vec<u8> {
     let mut bytes = Vec::with_capacity(8 * bit_boards.len());
 
@@ -122,7 +125,7 @@ pub fn read_valid_boards() -> HashSet<BitBoard> {
     let mut d = Vec::<u8>::new();
     file.read_to_end(&mut d).unwrap();
 
-    let mut data = bytes_to_boards(&d);
+    let data = bytes_to_boards(&d);
 
     data.iter().cloned().collect()
 }
@@ -137,6 +140,7 @@ pub fn read_valid_boards() -> HashSet<BitBoard> {
 // contains: 4777
 //
 // WHY??
+#[allow(unused)]
 pub fn benchmark_valid_board_hashing() {
     let mut connected_boards = read_valid_boards();
 

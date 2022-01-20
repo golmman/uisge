@@ -41,7 +41,7 @@ pub fn get_bit_indices(i: u64) -> Vec<u8> {
 
         indices.push(index as u8);
 
-        j ^= (1 << index);
+        j ^= 1 << index;
     }
 
     indices
