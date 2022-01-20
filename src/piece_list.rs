@@ -128,6 +128,7 @@ impl Debug for PieceList {
 mod test {
     use super::*;
     use crate::constants::BoardIndex;
+
     #[test]
     fn test_iterate_trivial() {
         let piece_list = PieceList::new();
@@ -264,13 +265,13 @@ mod test {
     #[test]
     #[should_panic]
     fn test_from_vec_u8_panic() {
-        PieceList::from(vec![8, 7, 6, 5, 4, 3, 2, 1]);
+        let _ = PieceList::from(vec![8, 7, 6, 5, 4, 3, 2, 1]);
     }
 
     #[test]
     #[should_panic]
     fn test_from_u64_panic() {
-        PieceList::from(0);
+        let _ = PieceList::from(0);
     }
 
     #[test]

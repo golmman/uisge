@@ -11,7 +11,7 @@ use crate::state::GameState;
 use crate::valid_board_gen::is_connected;
 
 // note that 'move' is a rust keyword, so when intended as variable 'mov' is used instead here
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq)]
 pub struct Move {
     from: BoardIndex,
     to: BoardIndex,
@@ -60,12 +60,16 @@ impl GameState {
         let allowed_jump_indices = get_bit_indices(allowed_jump_bits);
 
         for to in allowed_jump_indices {
-            if is_between_occupied(self.board.piece_bits, from, to) {
-                let moved_bit_board = jump_bit(self.board.piece_bits, from, to);
-                if is_connected(moved_bit_board, to) {
-                    moves.push(Move::new(from, to));
-                }
+            if !is_between_occupied(self.board.piece_bits, from, to) {
+                continue;
             }
+
+            let moved_bit_board = jump_bit(self.board.piece_bits, from, to);
+            if !is_connected(moved_bit_board, to) {
+                continue;
+            }
+
+            moves.push(Move::new(from, to));
         }
     }
 
@@ -97,5 +101,28 @@ fn calculate_between_index(a1: BoardIndex, a2: BoardIndex) -> BoardIndex {
         return a1 + 7;
     }
 
-    99
+    panic!();
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::constants::BoardIndex;
+
+    #[test]
+    fn test_generate_moves_from_initial_position() {
+        let game_state = GameState::new();
+
+        let moves = game_state.generate_moves();
+
+        assert_eq!(
+            moves,
+            vec![
+                Move::new(9, 11),
+                Move::new(10, 8),
+                Move::new(17, 3),
+                Move::new(17, 19),
+            ]
+        );
+    }
 }
