@@ -21,6 +21,21 @@ impl Move {
     pub fn new(from: BoardIndex, to: BoardIndex) -> Self {
         Self { from, to }
     }
+
+    pub fn is_jump(&self) -> bool {
+        let from = self.from as i8;
+        let to = self.to as i8;
+
+        let diff = from - to;
+
+        match diff {
+            2 => true,
+            -2 => true,
+            14 => true,
+            -14 => true,
+            _ => false,
+        }
+    }
 }
 
 impl Debug for Move {
@@ -73,8 +88,26 @@ impl GameState {
         }
     }
 
-    pub fn make_move(&mut self, mov: Move) -> BitBoard {
-        1
+    pub fn make_move(&mut self, mov: Move) {
+        let (mut kings, mut pawns) = self.get_active_pieces();
+
+        self.board.piece_bits = jump_bit(self.board.piece_bits, mov.from, mov.to);
+
+        if mov.is_jump() {
+            if kings.find_and_remove(mov.from) {
+                pawns.push_front(mov.to);
+            } else if pawns.find_and_remove(mov.from) {
+                kings.push_front(mov.to);
+            } else {
+                panic!("couldn't find jump move piece in king or pawn lists");
+            }
+        } else {
+            if kings.find_and_remove(mov.from) {
+                kings.push_front(mov.to);
+            } else {
+                panic!("couldn't find king move piece in king list");
+            }
+        }
     }
 
     pub fn unmake_move(&mut self, mov: Move) -> BitBoard {

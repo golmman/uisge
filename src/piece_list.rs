@@ -78,6 +78,29 @@ impl PieceList {
             Some(result as u8)
         }
     }
+
+    pub fn find_and_remove(&mut self, value: BoardIndex) -> bool{
+        let mut new_piece_list = PieceList::new();
+        let mut has_changed = false;
+
+        for i in 0..6 {
+            let v = ((self.pieces >> (i * 8)) & 0xff) as u8;
+
+            if v == END_OF_LIST {
+                break;
+            }
+
+            if v != value {
+                new_piece_list.push_front(v);
+            } else {
+                has_changed = true;
+            }
+        }
+
+        self.pieces = new_piece_list.pieces;
+
+        has_changed
+    }
 }
 
 impl IntoIterator for PieceList {
@@ -94,7 +117,11 @@ impl From<u64> for PieceList {
         let mut piece_list = PieceList::new();
         piece_list.pieces = bit_board;
 
-        assert_eq!(piece_list.pieces >> 56, END_OF_LIST as u64);
+        assert_eq!(
+            piece_list.pieces >> 56,
+            END_OF_LIST as u64,
+            "the PieceList mose significant byte must be 0xff"
+        );
         piece_list
     }
 }
@@ -260,6 +287,20 @@ mod test {
             PieceList::from(0xff01020304050607),
             PieceList::from(vec![7, 6, 5, 4, 3, 2, 1]),
         );
+    }
+
+    #[test]
+    fn test_find_and_remove() {
+        let mut x = PieceList::from(0xffff010203040506);
+
+        assert!(x.find_and_remove(4));
+        assert_eq!(x, PieceList::from(0xffffff0605030201));
+
+        assert!(!x.find_and_remove(4));
+        assert_eq!(x, PieceList::from(0xffffff0102030506));
+
+        assert!(x.find_and_remove(2));
+        assert_eq!(x, PieceList::from(0xffffffff06050301));
     }
 
     #[test]

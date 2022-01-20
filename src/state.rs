@@ -1,8 +1,6 @@
 use std::fmt::Display;
 
 use crate::constants::BitBoard;
-use crate::constants::BoardIndex;
-use crate::constants::BOARD_HEIGHT;
 use crate::constants::BOARD_TOTAL_PIECES;
 use crate::constants::BOARD_WIDTH;
 use crate::piece_list::PieceList;
@@ -41,6 +39,7 @@ impl GameState {
 pub struct Board {
     pub piece_bits: BitBoard,
 
+    // TODO: maybe BitBoards are faster?
     pub black_kings: PieceList,
     pub black_pawns: PieceList,
     pub white_kings: PieceList,
