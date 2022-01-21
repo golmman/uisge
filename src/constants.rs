@@ -2,6 +2,19 @@ pub type BitBoard = u64;
 pub type BoardIndex = u8;
 pub type BoardIndexList = [BoardIndex; 8];
 
+pub const COLOR_RESET: &str = "\x1b[0m";
+pub const COLOR_BLACK: &str = "\x1b[31m";
+pub const COLOR_RED: &str = "\x1b[31m";
+pub const COLOR_GREEN: &str = "\x1b[32m";
+pub const COLOR_YELLOW: &str = "\x1b[33m";
+pub const COLOR_BLUE: &str = "\x1b[34m";
+pub const COLOR_MAGENTA: &str = "\x1b[35m";
+pub const COLOR_CYAN: &str = "\x1b[36m";
+pub const COLOR_WHITE: &str = "\x1b[37m";
+
+pub const COLOR_WHITE_ON_MAGENTA: &str = "\x1b[37;45m";
+pub const COLOR_BLACK_ON_MAGENTA: &str = "\x1b[30;45m";
+
 pub const BOARD_WIDTH: u8 = 7;
 pub const BOARD_HEIGHT: u8 = 6;
 pub const BOARD_TOTAL_PIECES: u8 = BOARD_HEIGHT * BOARD_WIDTH;

@@ -7,6 +7,9 @@ use crate::constants::BitBoard;
 use crate::constants::BoardIndex;
 use crate::constants::BOARD_WIDTH;
 use crate::constants::JUMP_MOVES;
+use crate::constants::KING_MOVES;
+use crate::constants::COLOR_YELLOW;
+use crate::constants::COLOR_RESET;
 use crate::state::GameState;
 use crate::valid_board_gen::is_connected;
 
@@ -45,7 +48,11 @@ impl Debug for Move {
         let to_file = ('a' as u8 + self.to % BOARD_WIDTH) as char;
         let to_rank = self.to / BOARD_WIDTH + 1;
 
-        write!(f, "{}{}->{}{}", from_file, from_rank, to_file, to_rank)
+        if self.is_jump() {
+            write!(f, "{from_file}{from_rank}->{to_file}{to_rank}")
+        } else {
+            write!(f, "{COLOR_YELLOW}{from_file}{from_rank}->{to_file}{to_rank}{COLOR_RESET}")
+        }
     }
 }
 
@@ -67,11 +74,24 @@ impl GameState {
         moves
     }
 
-    fn append_king_moves(&self, moves: &mut Vec<Move>, from: BoardIndex) {}
+    fn append_king_moves(&self, moves: &mut Vec<Move>, from: BoardIndex) {
+        let king_moves = KING_MOVES[from as usize];
+        let allowed_jump_bits = king_moves & !self.board.piece_bits;
+        let allowed_jump_indices = get_bit_indices(allowed_jump_bits);
+
+        for to in allowed_jump_indices {
+            let moved_bit_board = jump_bit(self.board.piece_bits, from, to);
+            if !is_connected(moved_bit_board, to) {
+                continue;
+            }
+
+            moves.push(Move::new(from, to));
+        }
+    }
 
     fn append_jump_moves(&self, moves: &mut Vec<Move>, from: BoardIndex) {
-        let jumps = JUMP_MOVES[from as usize];
-        let allowed_jump_bits = jumps & !self.board.piece_bits;
+        let jump_moves = JUMP_MOVES[from as usize];
+        let allowed_jump_bits = jump_moves & !self.board.piece_bits;
         let allowed_jump_indices = get_bit_indices(allowed_jump_bits);
 
         for to in allowed_jump_indices {
@@ -108,6 +128,11 @@ impl GameState {
                 panic!("couldn't find king move piece in king list");
             }
         }
+
+        self.set_active_pieces(kings, pawns);
+
+        self.is_active_player_white = !self.is_active_player_white;
+        self.move_count += 1;
     }
 
     pub fn unmake_move(&mut self, mov: Move) -> BitBoard {
