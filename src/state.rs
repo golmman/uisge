@@ -98,7 +98,7 @@ impl Display for Board {
         }
 
         text.push_str(&format!(
-            "{}{}{}\n",
+            "{}{}{}",
             BLACK_ON_MAGENTA, "   a b c d e f g   ", RESET
         ));
 
