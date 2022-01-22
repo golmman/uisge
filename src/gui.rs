@@ -10,9 +10,9 @@ use crate::state::GameState;
 pub fn start_gui(game_state: &mut GameState) {
     loop {
         println!("*******************************************************");
-        println!("{}", game_state);
+        println!("{game_state}");
         let moves = game_state.generate_moves();
-        println!("{:?}", moves);
+        println!("{moves:?}");
         print_move_list_indices(&moves);
         println!("select a move number or type q for quit:");
 

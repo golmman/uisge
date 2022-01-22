@@ -17,5 +17,5 @@ fn main() {
     let mut game_state = GameState::new();
 
     start_gui(&mut game_state);
-    //think(game_state, 11);
+    //think(&game_state, 20);
 }
