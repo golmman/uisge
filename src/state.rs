@@ -29,13 +29,6 @@ impl GameState {
         }
     }
 
-    pub fn get_active_kings(&self) -> PieceList {
-        match self.is_active_player_white {
-            true => self.board.white_kings,
-            false => self.board.black_kings,
-        }
-    }
-
     pub fn get_active_pieces(&self) -> (PieceList, PieceList) {
         match self.is_active_player_white {
             true => (self.board.white_kings, self.board.white_pawns),

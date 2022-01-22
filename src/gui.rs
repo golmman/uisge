@@ -19,12 +19,14 @@ pub fn start_gui(game_state: &mut GameState) {
 
         if !game_state.is_active_player_white {
             let mov = think(game_state, 9);
+            println!("{COLOR_GREEN}moving {mov:?}{COLOR_RESET}");
+
             game_state.make_move(mov);
             continue;
         }
 
         let mut buffer = String::new();
-        let mut stdin = stdin();
+        let stdin = stdin();
         stdin.read_line(&mut buffer).unwrap();
 
         buffer.pop();

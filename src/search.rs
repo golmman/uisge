@@ -17,8 +17,8 @@ pub fn think(game_state: &GameState, depth: u32) -> Move {
 pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32) -> (i32, Move) {
     let mut i = 0;
     let mut a = alpha;
-    let mut b = beta;
-    let mut score = SCORE_MIN;
+    let b = beta;
+    let mut score: i32;
     let mut best_score = SCORE_MIN;
     let mut best_move = Move::new(0, 0);
 

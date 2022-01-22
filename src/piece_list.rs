@@ -69,6 +69,7 @@ impl PieceList {
         assert_eq!(self.pieces >> 56, END_OF_LIST as u64);
     }
 
+    #[allow(unused)]
     pub fn remove(&mut self, index: usize) -> Option<BoardIndex> {
         let shift = index * 8;
 
@@ -316,16 +317,16 @@ mod test {
 
     #[test]
     fn test_len() {
-        let mut x = PieceList::from(0xffff010203040506);
+        let x = PieceList::from(0xffff010203040506);
         assert_eq!(x.len(), 6);
 
-        let mut x = PieceList::from(0xffffff0203040506);
+        let x = PieceList::from(0xffffff0203040506);
         assert_eq!(x.len(), 5);
 
-        let mut x = PieceList::from(0xffffffffffffff06);
+        let x = PieceList::from(0xffffffffffffff06);
         assert_eq!(x.len(), 1);
 
-        let mut x = PieceList::from(0xffffffffffffffff);
+        let x = PieceList::from(0xffffffffffffffff);
         assert_eq!(x.len(), 0);
     }
 

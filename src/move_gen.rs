@@ -141,10 +141,6 @@ impl GameState {
         self.is_active_player_white = !self.is_active_player_white;
         self.move_count += 1;
     }
-
-    pub fn unmake_move(&mut self, mov: Move) -> BitBoard {
-        1
-    }
 }
 
 fn is_between_occupied(board: BitBoard, a1: BoardIndex, a2: BoardIndex) -> bool {
@@ -172,7 +168,6 @@ fn calculate_between_index(a1: BoardIndex, a2: BoardIndex) -> BoardIndex {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::constants::BoardIndex;
 
     #[test]
     fn test_generate_moves_from_initial_position() {

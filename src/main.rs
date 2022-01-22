@@ -1,13 +1,9 @@
-use std::time::{Instant, Duration};
-
-use crate::gui::print_move_list_indices;
 use crate::state::GameState;
-
-use self::constants::{SCORE_MAX, SCORE_MIN};
 use self::gui::start_gui;
-use self::move_gen::Move;
 
+#[allow(unused)]
 mod bit_board_gen;
+#[allow(unused)]
 mod bit_utils;
 mod constants;
 mod gui;
