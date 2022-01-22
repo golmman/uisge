@@ -1,4 +1,6 @@
-use crate::constants::{SCORE_KING_COUNT, SCORE_MAX, SCORE_MIN};
+use crate::constants::SCORE_KING_COUNT;
+use crate::constants::SCORE_MAX;
+use crate::constants::SCORE_MIN;
 use crate::move_gen::Move;
 use crate::state::GameState;
 
@@ -35,7 +37,7 @@ pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32) -> (i32, M
         if i == 0 {
             score = -pvs(&game_state_move, -b, -a, depth - 1).0;
         } else {
-            score = -pvs(&game_state_move, -a-1, -a, depth - 1).0;
+            score = -pvs(&game_state_move, -a - 1, -a, depth - 1).0;
             if a < score && score < b {
                 score = -pvs(&game_state_move, -b, -score, depth - 1).0;
             }

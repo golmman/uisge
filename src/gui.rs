@@ -1,10 +1,11 @@
+use std::io::stdin;
+
 use crate::constants::COLOR_GREEN;
 use crate::constants::COLOR_RED;
 use crate::constants::COLOR_RESET;
 use crate::move_gen::Move;
 use crate::search::think;
 use crate::state::GameState;
-use std::io::stdin;
 
 pub fn start_gui(game_state: &mut GameState) {
     loop {

@@ -1,5 +1,5 @@
-use crate::state::GameState;
 use self::gui::start_gui;
+use crate::state::GameState;
 
 #[allow(unused)]
 mod bit_board_gen;
