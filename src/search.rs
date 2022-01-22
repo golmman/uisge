@@ -56,18 +56,11 @@ pub fn think(game_state: &GameState, max_depth: u32) -> Move {
 
 //pub fn start_pvs(game_state: &GameState, depth: u32) -> (i32
 
-pub fn pvs(
-    game_state: &GameState,
-    alpha: i32,
-    beta: i32,
-    depth: u32,
-    pv_line: &mut PVLine,
-) -> i32 {
+pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32, pv_line: &mut PVLine) -> i32 {
     let mut new_pv_line = PVLine::from_pv_line_tail(pv_line); //PVLine::new();
     let mut a = alpha;
     let b = beta;
     let mut score: i32;
-    let mut best_move = Move::new(0, 0);
 
     // TODO: move sorting with principal variation
     let mut moves = game_state.generate_moves();
@@ -94,8 +87,6 @@ pub fn pvs(
 
         if score > a {
             a = score;
-            best_move = mov;
-
             pv_line.update(mov, &mut new_pv_line);
         }
 
