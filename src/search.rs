@@ -42,18 +42,16 @@ impl Display for PVLine {
 pub fn think(game_state: &GameState, max_depth: u32) -> Move {
     let start_instant = Instant::now();
 
-    let mut m = Move::new(0, 0);
     let mut pv_line = PVLine::new();
 
     for depth in 1..max_depth {
-        let (score, mov) = pvs(game_state, SCORE_MIN, SCORE_MAX, depth, &mut pv_line);
+        let score = pvs(game_state, SCORE_MIN, SCORE_MAX, depth, &mut pv_line);
         let elapsed = start_instant.elapsed().as_millis();
-        m = mov;
 
-        println!("{elapsed:>6} | {depth:>3} | {score:>5} | {mov:?} | {pv_line}");
+        println!("{elapsed:>6} | {depth:>3} | {score:>5} | {pv_line}");
     }
 
-    m
+    pv_line.moves[0]
 }
 
 //pub fn start_pvs(game_state: &GameState, depth: u32) -> (i32
@@ -64,7 +62,7 @@ pub fn pvs(
     beta: i32,
     depth: u32,
     pv_line: &mut PVLine,
-) -> (i32, Move) {
+) -> i32 {
     let mut new_pv_line = PVLine::from_pv_line_tail(pv_line); //PVLine::new();
     let mut a = alpha;
     let b = beta;
@@ -78,7 +76,7 @@ pub fn pvs(
     }
 
     if depth == 0 || moves.is_empty() {
-        return (evaluate(game_state), best_move);
+        return evaluate(game_state);
     }
 
     for (i, mov) in moves.into_iter().enumerate() {
@@ -86,11 +84,11 @@ pub fn pvs(
         game_state_move.make_move(mov);
 
         if i == 0 {
-            score = -pvs(&game_state_move, -b, -a, depth - 1, &mut new_pv_line).0;
+            score = -pvs(&game_state_move, -b, -a, depth - 1, &mut new_pv_line);
         } else {
-            score = -pvs(&game_state_move, -a - 1, -a, depth - 1, &mut new_pv_line).0;
+            score = -pvs(&game_state_move, -a - 1, -a, depth - 1, &mut new_pv_line);
             if a < score && score < b {
-                score = -pvs(&game_state_move, -b, -score, depth - 1, &mut new_pv_line).0;
+                score = -pvs(&game_state_move, -b, -score, depth - 1, &mut new_pv_line);
             }
         }
 
@@ -106,7 +104,7 @@ pub fn pvs(
         }
     }
 
-    (a, best_move)
+    a
 }
 
 pub fn evaluate(game_state: &GameState) -> i32 {

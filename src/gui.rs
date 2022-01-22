@@ -19,7 +19,7 @@ pub fn start_gui(game_state: &mut GameState) {
         //println!("{:?}", game_state.board);
 
         if !game_state.is_active_player_white {
-            let mov = think(game_state, 9);
+            let mov = think(game_state, 12);
             println!("{COLOR_GREEN}moving {mov:?}{COLOR_RESET}");
 
             game_state.make_move(mov);
