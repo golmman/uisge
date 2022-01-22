@@ -86,7 +86,7 @@ fn unset_bit(bit_board: BitBoard, x: BoardIndex, y: BoardIndex) -> BitBoard {
     bit_board & !mask
 }
 
-pub fn bytes_to_boards(bytes: &Vec<u8>) -> Vec<BitBoard> {
+pub fn bytes_to_boards(bytes: &[u8]) -> Vec<BitBoard> {
     let bit_boards_len = bytes.len() / 8; // if not aligned, some data is lost
     let mut bit_boards = Vec::with_capacity(bit_boards_len);
 
@@ -111,7 +111,7 @@ pub fn bytes_to_boards(bytes: &Vec<u8>) -> Vec<BitBoard> {
 }
 
 #[allow(unused)]
-pub fn boards_to_bytes(bit_boards: &Vec<BitBoard>) -> Vec<u8> {
+pub fn boards_to_bytes(bit_boards: &[BitBoard]) -> Vec<u8> {
     let mut bytes = Vec::with_capacity(8 * bit_boards.len());
 
     for bit_board in bit_boards {

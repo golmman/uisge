@@ -32,7 +32,7 @@ pub fn start_gui(game_state: &mut GameState) {
         buffer.pop();
 
         if let Ok(move_list_index) = buffer.parse::<usize>() {
-            if move_list_index <= 0 || move_list_index > moves.len() {
+            if move_list_index == 0 || move_list_index > moves.len() {
                 println!("{COLOR_RED}invalid move number{COLOR_RESET}");
             } else {
                 let mov = moves[move_list_index - 1];
@@ -49,7 +49,7 @@ pub fn start_gui(game_state: &mut GameState) {
     }
 }
 
-pub fn print_move_list_indices(moves: &Vec<Move>) {
+pub fn print_move_list_indices(moves: &[Move]) {
     let mut indices = String::new();
 
     for i in 0..moves.len() {

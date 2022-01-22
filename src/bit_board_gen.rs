@@ -14,23 +14,23 @@ fn print_king_moves() {
 
     for y in 0..BOARD_HEIGHT {
         for x in 0..BOARD_WIDTH {
-            let mut b = 0;
+            let mut bits = 0;
 
-            b = set_board_bit(b, x.wrapping_sub(1), y.wrapping_sub(1));
-            b = set_board_bit(b, x, y.wrapping_sub(1));
-            b = set_board_bit(b, x + 1, y.wrapping_sub(1));
+            bits = set_board_bit(bits, x.wrapping_sub(1), y.wrapping_sub(1));
+            bits = set_board_bit(bits, x, y.wrapping_sub(1));
+            bits = set_board_bit(bits, x + 1, y.wrapping_sub(1));
 
-            b = set_board_bit(b, x.wrapping_sub(1), y);
-            b = set_board_bit(b, x + 1, y);
+            bits = set_board_bit(bits, x.wrapping_sub(1), y);
+            bits = set_board_bit(bits, x + 1, y);
 
-            b = set_board_bit(b, x.wrapping_sub(1), y + 1);
-            b = set_board_bit(b, x, y + 1);
-            b = set_board_bit(b, x + 1, y + 1);
+            bits = set_board_bit(bits, x.wrapping_sub(1), y + 1);
+            bits = set_board_bit(bits, x, y + 1);
+            bits = set_board_bit(bits, x + 1, y + 1);
 
-            println!("{}", format!("    0b{:042b},", b));
+            println!("    0b{bits:042b},");
 
             //println!("-------");
-            //print_bit_board(b);
+            //print_bit_board(bits);
         }
     }
 
@@ -42,19 +42,19 @@ fn print_jump_moves() {
 
     for y in 0..BOARD_HEIGHT {
         for x in 0..BOARD_WIDTH {
-            let mut b = 0;
+            let mut bits = 0;
 
-            b = set_board_bit(b, x, y.wrapping_sub(2));
+            bits = set_board_bit(bits, x, y.wrapping_sub(2));
 
-            b = set_board_bit(b, x.wrapping_sub(2), y);
-            b = set_board_bit(b, x + 2, y);
+            bits = set_board_bit(bits, x.wrapping_sub(2), y);
+            bits = set_board_bit(bits, x + 2, y);
 
-            b = set_board_bit(b, x, y + 2);
+            bits = set_board_bit(bits, x, y + 2);
 
-            println!("{}", format!("    0b{:042b},", b));
+            println!("    0b{bits:042b},");
 
             //println!("-------");
-            //print_bit_board(b);
+            //print_bit_board(bits);
         }
     }
 

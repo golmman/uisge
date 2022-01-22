@@ -11,7 +11,7 @@ pub const fn make_board(bits: [[u8; 7]; 6]) -> BitBoard {
         let mut x = 0;
         while x < 7 {
             if bits[y][x] != 0 {
-                board |= 1 << 7 * (5 - y) + (6 - x);
+                board |= 1 << (7 * (5 - y) + (6 - x));
             }
             x += 1;
         }

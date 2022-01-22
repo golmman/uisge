@@ -6,7 +6,7 @@ pub fn think(game_state: &GameState, depth: u32) -> Move {
     let mut m = Move::new(0, 0);
 
     for d in 1..depth {
-        let (score, mov) = pvs(&game_state, SCORE_MIN, SCORE_MAX, d);
+        let (score, mov) = pvs(game_state, SCORE_MIN, SCORE_MAX, d);
         m = mov;
         println!("{d:>3} | {score:>5} | {mov:?}");
     }
@@ -15,7 +15,6 @@ pub fn think(game_state: &GameState, depth: u32) -> Move {
 }
 
 pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32) -> (i32, Move) {
-    let mut i = 0;
     let mut a = alpha;
     let b = beta;
     let mut score: i32;
@@ -29,7 +28,7 @@ pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32) -> (i32, M
         return (evaluate(game_state), best_move);
     }
 
-    for mov in moves {
+    for (i, mov) in moves.into_iter().enumerate() {
         let mut game_state_move = game_state.clone();
         game_state_move.make_move(mov);
 
@@ -52,11 +51,9 @@ pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32) -> (i32, M
         if a >= b {
             break;
         }
-
-        i += 1;
     }
 
-    return (a, best_move);
+    (a, best_move)
 }
 
 pub fn evaluate(game_state: &GameState) -> i32 {
@@ -71,8 +68,8 @@ pub fn evaluate(game_state: &GameState) -> i32 {
     let score = white_king_score - black_king_score + move_count_score;
 
     if game_state.is_active_player_white {
-        return score;
+        score
     } else {
-        return -score;
+        -score
     }
 }

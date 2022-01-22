@@ -31,21 +31,15 @@ impl Move {
 
         let diff = from - to;
 
-        match diff {
-            2 => true,
-            -2 => true,
-            14 => true,
-            -14 => true,
-            _ => false,
-        }
+        matches!(diff, 2 | -2 | 14 | -14)
     }
 }
 
 impl Debug for Move {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let from_file = ('a' as u8 + self.from % BOARD_WIDTH) as char;
+        let from_file = (b'a' + self.from % BOARD_WIDTH) as char;
         let from_rank = self.from / BOARD_WIDTH + 1;
-        let to_file = ('a' as u8 + self.to % BOARD_WIDTH) as char;
+        let to_file = (b'a' + self.to % BOARD_WIDTH) as char;
         let to_rank = self.to / BOARD_WIDTH + 1;
 
         if self.is_jump() {
@@ -128,12 +122,10 @@ impl GameState {
             } else {
                 panic!("couldn't find jump move piece in king or pawn lists");
             }
+        } else if kings.find_and_remove(mov.from) {
+            kings.push_front(mov.to);
         } else {
-            if kings.find_and_remove(mov.from) {
-                kings.push_front(mov.to);
-            } else {
-                panic!("couldn't find king move piece in king list");
-            }
+            panic!("couldn't find king move piece in king list");
         }
 
         self.set_active_pieces(kings, pawns);
@@ -184,5 +176,18 @@ mod test {
                 Move::new(17, 19),
             ]
         );
+    }
+
+    #[test]
+    fn test_is_jump() {
+        assert!(!Move::new(0, 0).is_jump());
+        assert!(!Move::new(0, 1).is_jump());
+        assert!(!Move::new(3, 7).is_jump());
+
+        assert!(Move::new(0, 2).is_jump());
+        assert!(Move::new(17, 19).is_jump());
+        assert!(Move::new(19, 17).is_jump());
+        assert!(Move::new(3, 17).is_jump());
+        assert!(Move::new(17, 3).is_jump());
     }
 }

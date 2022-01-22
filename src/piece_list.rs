@@ -59,7 +59,7 @@ impl PieceList {
         panic!("piece list length could not be determined");
     }
 
-    pub fn to_array(&self) -> BoardIndexList {
+    pub fn to_array(self) -> BoardIndexList {
         self.pieces.to_le_bytes()
     }
 
@@ -85,7 +85,7 @@ impl PieceList {
         self.pieces = (lower | (upper << shift)) | 0xff00000000000000;
 
         if result as u8 == END_OF_LIST {
-            return None;
+            None
         } else {
             Some(result as u8)
         }
