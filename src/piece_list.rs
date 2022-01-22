@@ -48,6 +48,17 @@ impl PieceList {
         }
     }
 
+    pub fn len(&self) -> usize {
+        for i in 0..8 {
+            let piece = (self.pieces >> (i * 8)) & 0xff;
+            if piece == 0xff {
+                return i;
+            }
+        }
+
+        panic!("piece list length could not be determined");
+    }
+
     pub fn to_array(&self) -> BoardIndexList {
         self.pieces.to_le_bytes()
     }
@@ -79,7 +90,7 @@ impl PieceList {
         }
     }
 
-    pub fn find_and_remove(&mut self, value: BoardIndex) -> bool{
+    pub fn find_and_remove(&mut self, value: BoardIndex) -> bool {
         let mut new_piece_list = PieceList::new();
         let mut has_changed = false;
 
@@ -301,6 +312,21 @@ mod test {
 
         assert!(x.find_and_remove(2));
         assert_eq!(x, PieceList::from(0xffffffff06050301));
+    }
+
+    #[test]
+    fn test_len() {
+        let mut x = PieceList::from(0xffff010203040506);
+        assert_eq!(x.len(), 6);
+
+        let mut x = PieceList::from(0xffffff0203040506);
+        assert_eq!(x.len(), 5);
+
+        let mut x = PieceList::from(0xffffffffffffff06);
+        assert_eq!(x.len(), 1);
+
+        let mut x = PieceList::from(0xffffffffffffffff);
+        assert_eq!(x.len(), 0);
     }
 
     #[test]

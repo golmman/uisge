@@ -6,10 +6,10 @@ use crate::bit_utils::jump_bit;
 use crate::constants::BitBoard;
 use crate::constants::BoardIndex;
 use crate::constants::BOARD_WIDTH;
+use crate::constants::COLOR_RESET;
+use crate::constants::COLOR_YELLOW;
 use crate::constants::JUMP_MOVES;
 use crate::constants::KING_MOVES;
-use crate::constants::COLOR_YELLOW;
-use crate::constants::COLOR_RESET;
 use crate::state::GameState;
 use crate::valid_board_gen::is_connected;
 
@@ -51,7 +51,10 @@ impl Debug for Move {
         if self.is_jump() {
             write!(f, "{from_file}{from_rank}->{to_file}{to_rank}")
         } else {
-            write!(f, "{COLOR_YELLOW}{from_file}{from_rank}->{to_file}{to_rank}{COLOR_RESET}")
+            write!(
+                f,
+                "{COLOR_YELLOW}{from_file}{from_rank}->{to_file}{to_rank}{COLOR_RESET}"
+            )
         }
     }
 }

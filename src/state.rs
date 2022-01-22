@@ -1,14 +1,15 @@
 use std::fmt::Display;
 
-use crate::constants::COLOR_BLACK_ON_MAGENTA;
 use crate::constants::BitBoard;
 use crate::constants::BOARD_TOTAL_PIECES;
 use crate::constants::BOARD_WIDTH;
+use crate::constants::COLOR_BLACK_ON_MAGENTA;
 use crate::constants::COLOR_RESET;
 use crate::constants::COLOR_WHITE_ON_MAGENTA;
 use crate::piece_list::PieceList;
 use crate::valid_board_gen::make_board;
 
+#[derive(Clone)]
 pub struct GameState {
     pub board: Board,
     pub is_active_player_white: bool,
@@ -25,6 +26,13 @@ impl GameState {
             board,
             is_active_player_white,
             move_count,
+        }
+    }
+
+    pub fn get_active_kings(&self) -> PieceList {
+        match self.is_active_player_white {
+            true => self.board.white_kings,
+            false => self.board.black_kings,
         }
     }
 
@@ -57,9 +65,13 @@ impl Display for GameState {
 
         let move_count = self.move_count;
         if self.is_active_player_white {
-            text.push_str(&format!("{COLOR_WHITE_ON_MAGENTA}    WHITE {move_count:05}    {COLOR_RESET}"));
+            text.push_str(&format!(
+                "{COLOR_WHITE_ON_MAGENTA}    WHITE {move_count:05}    {COLOR_RESET}"
+            ));
         } else {
-            text.push_str(&format!("{COLOR_BLACK_ON_MAGENTA}    BLACK {move_count:05}    {COLOR_RESET}"));
+            text.push_str(&format!(
+                "{COLOR_BLACK_ON_MAGENTA}    BLACK {move_count:05}    {COLOR_RESET}"
+            ));
         }
 
         write!(f, "{text}")
@@ -72,7 +84,7 @@ impl Display for GameState {
 // 21 22 23 24 25 26 27
 // 28 29 30 31 32 33 34
 // 35 36 37 38 39 40 41
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct Board {
     pub piece_bits: BitBoard,
 
@@ -92,8 +104,10 @@ impl Display for Board {
             COLOR_BLACK_ON_MAGENTA, "   a b c d e f g   ", COLOR_RESET
         ));
 
-        let mut piece =
-            vec![format!("{}{}{}", COLOR_BLACK_ON_MAGENTA, "- ", COLOR_RESET); BOARD_TOTAL_PIECES as usize];
+        let mut piece = vec![
+            format!("{}{}{}", COLOR_BLACK_ON_MAGENTA, "- ", COLOR_RESET);
+            BOARD_TOTAL_PIECES as usize
+        ];
 
         for i in self.black_kings {
             piece[i as usize] = format!("{}{}{}", COLOR_BLACK_ON_MAGENTA, "W ", COLOR_RESET);
