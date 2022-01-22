@@ -2,6 +2,7 @@ use crate::constants::COLOR_GREEN;
 use crate::constants::COLOR_RED;
 use crate::constants::COLOR_RESET;
 use crate::move_gen::Move;
+use crate::search::think;
 use crate::state::GameState;
 use std::io::stdin;
 
@@ -15,6 +16,12 @@ pub fn start_gui(game_state: &mut GameState) {
         println!("select a move number or type q for quit:");
 
         //println!("{:?}", game_state.board);
+
+        if !game_state.is_active_player_white {
+            let mov = think(game_state, 9);
+            game_state.make_move(mov);
+            continue;
+        }
 
         let mut buffer = String::new();
         let mut stdin = stdin();

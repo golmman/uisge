@@ -63,6 +63,10 @@ impl GameState {
     pub fn generate_moves(&self) -> Vec<Move> {
         let mut moves = Vec::<Move>::new();
 
+        if self.board.white_kings.len() == 6 || self.board.black_kings.len() == 6 {
+            return moves;
+        }
+
         let (kings, pawns) = self.get_active_pieces();
 
         for king in kings {
