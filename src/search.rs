@@ -4,23 +4,29 @@ use crate::constants::SCORE_MIN;
 use crate::move_gen::Move;
 use crate::state::GameState;
 
-pub fn think(game_state: &GameState, depth: u32) -> Move {
+struct PVLine {
+    len: usize,
+    moves: [Move; 100],
+}
+
+pub fn think(game_state: &GameState, max_depth: u32) -> Move {
     let mut m = Move::new(0, 0);
 
-    for d in 1..depth {
-        let (score, mov) = pvs(game_state, SCORE_MIN, SCORE_MAX, d);
+    for depth in 1..max_depth {
+        let (score, mov) = pvs(game_state, SCORE_MIN, SCORE_MAX, depth);
         m = mov;
-        println!("{d:>3} | {score:>5} | {mov:?}");
+        println!("{depth:>3} | {score:>5} | {mov:?}");
     }
 
     m
 }
 
+//pub fn start_pvs(game_state: &GameState, depth: u32) -> (i32
+
 pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32) -> (i32, Move) {
     let mut a = alpha;
     let b = beta;
     let mut score: i32;
-    let mut best_score = SCORE_MIN;
     let mut best_move = Move::new(0, 0);
 
     // TODO: move sorting with principal variation
@@ -43,10 +49,8 @@ pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32) -> (i32, M
             }
         }
 
-        a = a.max(score);
-
-        if best_score < a {
-            best_score = a;
+        if score > a {
+            a = score;
             best_move = mov;
         }
 
