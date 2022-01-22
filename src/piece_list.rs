@@ -113,6 +113,17 @@ impl PieceList {
 
         has_changed
     }
+
+    pub fn contains(&self, value: BoardIndex) -> bool {
+        for i in 0..6 {
+            let v = ((self.pieces >> (i * 8)) & 0xff) as u8;
+            if v == value {
+                return true;
+            }
+        }
+
+        false
+    }
 }
 
 impl IntoIterator for PieceList {
@@ -328,6 +339,21 @@ mod test {
 
         let x = PieceList::from(0xffffffffffffffff);
         assert_eq!(x.len(), 0);
+    }
+
+    #[test]
+    fn test_contains() {
+        let x = PieceList::from(0xffff010203040506);
+
+        assert!(x.contains(1));
+        assert!(x.contains(2));
+        assert!(x.contains(3));
+        assert!(x.contains(4));
+        assert!(x.contains(5));
+        assert!(x.contains(6));
+
+        assert!(!x.contains(7));
+        assert!(!x.contains(23));
     }
 
     #[test]

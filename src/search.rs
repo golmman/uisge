@@ -54,8 +54,6 @@ pub fn think(game_state: &GameState, max_depth: u32) -> Move {
     pv_line.moves[0]
 }
 
-//pub fn start_pvs(game_state: &GameState, depth: u32) -> (i32
-
 pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32, pv_line: &mut PVLine) -> i32 {
     let mut new_pv_line = PVLine::from_pv_line_tail(pv_line); //PVLine::new();
     let mut a = alpha;
@@ -103,11 +101,15 @@ pub fn evaluate(game_state: &GameState) -> i32 {
     let black_king_score = SCORE_KING_COUNT[game_state.board.black_kings.len()];
     let move_count_score = game_state.move_count as i32;
 
-    // TODO
-    // why seems "+ move_count_score" to work here?
-    // possibly because a higher move count is good in a losing position but
-    // bad in a winning position, and black is currently the computer, so winning
-    let score = white_king_score - black_king_score + move_count_score;
+    let mut score = white_king_score - black_king_score;
+
+    // In a winning position high we are penalizing longer games,
+    // in a losing position we reward longer games.
+    if score > 0 {
+        score -= move_count_score;
+    } else {
+        score += move_count_score;
+    }
 
     if game_state.is_active_player_white {
         score

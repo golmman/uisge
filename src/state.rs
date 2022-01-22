@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
 use crate::constants::BitBoard;
+use crate::constants::BoardIndex;
 use crate::constants::BOARD_TOTAL_PIECES;
 use crate::constants::BOARD_WIDTH;
 use crate::constants::COLOR_BLACK_ON_MAGENTA;
@@ -172,5 +173,10 @@ impl Board {
             white_kings,
             white_pawns,
         }
+    }
+
+    #[allow(unused)]
+    pub fn is_king(&self, i: BoardIndex) -> bool {
+        self.black_kings.contains(i) || self.white_kings.contains(i)
     }
 }
