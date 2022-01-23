@@ -10,7 +10,7 @@ This application allows you to play Uisge against the computer in your terminal.
 ## Rule summary
 
 - You play as either black or white, white begins
-- There are two different piece types: pawns and kings
+- There are two different piece types: pawns `o` and kings `W`
 - In the starting position there are only pawns
 - The only allowed pawn move is jumping over other pieces horizontally or vertically
 - Kings are allowed to jump, like pawns, but also to move like a chess king
