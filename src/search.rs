@@ -81,17 +81,16 @@ pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32, pv_line: &
         let mut game_state_move = game_state.clone();
         game_state_move.make_move(mov);
 
-        // late move reduction
-        let lmr_depth = if depth > 2 && !mov.is_jump() {
-            depth - 2
-        } else {
-            depth - 1
-        };
-
         if i == 0 {
             score = -pvs(&game_state_move, -b, -a, depth - 1, &mut new_pv_line);
         } else {
-            score = -pvs(&game_state_move, -a - 1, -a, lmr_depth, &mut new_pv_line);
+            if depth > 2 && !mov.is_jump() {
+                // late move reduction
+                score = -pvs(&game_state_move, -a - 1, -a, depth - 2, &mut new_pv_line);
+            } else {
+                score = -pvs(&game_state_move, -a - 1, -a, depth - 1, &mut new_pv_line);
+            }
+
             if a < score && score < b {
                 score = -pvs(&game_state_move, -b, -score, depth - 1, &mut new_pv_line);
             }
