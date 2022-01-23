@@ -8,7 +8,7 @@ use crate::constants::BitBoard;
 use crate::constants::BoardIndex;
 use crate::constants::BOARD_WIDTH;
 
-// algorithm from https://stackoverflow.com/a/2075867/5460583
+// base algorithm from https://stackoverflow.com/a/2075867/5460583
 #[allow(unused)]
 pub fn generate_valid_boards() {
     let mut file = File::create("connected_boards_test.dat").unwrap();

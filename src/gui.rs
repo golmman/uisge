@@ -10,14 +10,20 @@ use crate::search::think;
 use crate::state::GameState;
 
 #[derive(PartialEq)]
-enum GameMode {
+pub enum GameMode {
     ComputerBlack,
     ComputerWhite,
     NoComputer,
 }
 
+pub struct Configuration {
+    pub game_mode: GameMode,
+    pub search_depth_max: u32,
+}
+
 pub fn start_gui(game_state: &mut GameState) {
     let game_mode: GameMode;
+    let search_depth_max = get_search_depth_max();
 
     println!();
 
@@ -45,6 +51,9 @@ pub fn start_gui(game_state: &mut GameState) {
         println!(r#"                 |___/      "#);
     }
 
+    println!();
+    println!("Configuration:");
+    println!("    Computer search depth: {search_depth_max}");
     println!();
     println!("Select game mode:");
     println!("    b - play against computer as black");
@@ -75,10 +84,15 @@ pub fn start_gui(game_state: &mut GameState) {
         }
     }
 
-    run_game(game_state, &game_mode);
+    let config = Configuration {
+        game_mode,
+        search_depth_max,
+    };
+
+    run_game(game_state, config);
 }
 
-fn run_game(game_state: &mut GameState, game_mode: &GameMode) {
+fn run_game(game_state: &mut GameState, config: Configuration) {
     loop {
         println!("*******************************************************");
         println!("{game_state}");
@@ -88,8 +102,8 @@ fn run_game(game_state: &mut GameState, game_mode: &GameMode) {
 
         //println!("{:?}", game_state.board);
 
-        if is_computers_turn(game_state, game_mode) {
-            let mov = think(game_state, 12);
+        if is_computers_turn(game_state, &config.game_mode) {
+            let mov = think(game_state, config.search_depth_max);
             println!("{COLOR_GREEN}computer moves {mov:?}{COLOR_RESET}");
 
             game_state.make_move(mov);
@@ -114,7 +128,7 @@ fn run_game(game_state: &mut GameState, game_mode: &GameMode) {
                 game_state.make_move(mov);
             }
         } else if buffer == "a" {
-            println!("{COLOR_GREEN}analyze position{COLOR_RESET}");
+            println!("{COLOR_GREEN}analyze position{COLOR_RESET} (quit with ctrl+c)");
             think(game_state, 100);
         } else if buffer == "q" {
             println!("{COLOR_GREEN}quit{COLOR_RESET}");
@@ -123,6 +137,16 @@ fn run_game(game_state: &mut GameState, game_mode: &GameMode) {
             println!("{COLOR_RED}invalid input{COLOR_RESET}");
         }
     }
+}
+
+fn get_search_depth_max() -> u32 {
+    if let Ok(sdm_str) = std::env::var("SEARCH_DEPTH_MAX") {
+        if let Ok(sdm_num) = sdm_str.parse::<u32>() {
+            return sdm_num;
+        }
+    };
+
+    11
 }
 
 fn is_computers_turn(game_state: &GameState, game_mode: &GameMode) -> bool {

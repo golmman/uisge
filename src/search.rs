@@ -46,7 +46,7 @@ pub fn think(game_state: &GameState, max_depth: u32) -> Move {
 
     println!("      time | depth | score | principal variation");
     println!(" ----------|-------|-------|---------------------------");
-    for depth in 1..max_depth {
+    for depth in 1..max_depth + 1 {
         let score = pvs(game_state, SCORE_MIN, SCORE_MAX, depth, &mut pv_line);
         let elapsed = start_instant.elapsed().as_millis() as f32 / 1000f32;
 
