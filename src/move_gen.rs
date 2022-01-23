@@ -63,13 +63,14 @@ impl GameState {
 
         let (kings, pawns) = self.get_active_pieces();
 
+        // note that this move order improves the alpha-beta search
+        for pawn in pawns {
+            self.append_jump_moves(&mut moves, pawn);
+        }
+
         for king in kings {
             self.append_jump_moves(&mut moves, king);
             self.append_king_moves(&mut moves, king);
-        }
-
-        for pawn in pawns {
-            self.append_jump_moves(&mut moves, pawn);
         }
 
         moves
