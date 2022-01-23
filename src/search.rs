@@ -63,14 +63,18 @@ pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32, pv_line: &
     let b = beta;
     let mut score: i32;
 
-    // TODO: move sorting with principal variation
-    let mut moves = game_state.generate_moves();
-    if !pv_line.moves.is_empty() {
-        swap_move_to_front(&mut moves, pv_line.moves[0]);
+    if depth == 0 {
+        return evaluate(game_state);
     }
 
-    if depth == 0 || moves.is_empty() {
-        return evaluate(game_state);
+    let mut moves = game_state.generate_moves();
+
+    if moves.is_empty() {
+        return SCORE_MIN;
+    }
+
+    if !pv_line.moves.is_empty() {
+        swap_move_to_front(&mut moves, pv_line.moves[0]);
     }
 
     for (i, mov) in moves.into_iter().enumerate() {

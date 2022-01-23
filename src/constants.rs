@@ -14,9 +14,18 @@ pub const COLOR_YELLOW: &str = "\x1b[33m";
 pub const COLOR_WHITE_ON_MAGENTA: &str = "\x1b[37;45m";
 pub const COLOR_BLACK_ON_MAGENTA: &str = "\x1b[30;45m";
 
-pub const SCORE_MAX: i32 = 1_000_000;
+pub const SCORE_STEP: i32 = 1000;
+pub const SCORE_MAX: i32 = 1000 * SCORE_STEP;
 pub const SCORE_MIN: i32 = -SCORE_MAX;
-pub const SCORE_KING_COUNT: [i32; 7] = [0, 1000, 2000, 3000, 4000, 5000, SCORE_MAX];
+pub const SCORE_KING_COUNT: [i32; 7] = [
+    0,
+    SCORE_STEP,
+    2 * SCORE_STEP,
+    3 * SCORE_STEP,
+    4 * SCORE_STEP,
+    5 * SCORE_STEP,
+    SCORE_MAX,
+];
 
 pub const BOARD_WIDTH: u8 = 7;
 pub const BOARD_HEIGHT: u8 = 6;
