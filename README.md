@@ -7,6 +7,16 @@ This application allows you to play Uisge against the computer in your terminal.
 
 ![Screenshot](https://github.com/golmman/uisge/blob/main/uisge.png "Uisge")
 
+## Rule summary
+
+- You play as either black or white, white begins
+- There are two different piece types: pawns and kings
+- In the starting position there are only pawns
+- The only allowed pawn move is jumping over other pieces horizontally or vertically
+- Kings are allowed to jump, like pawns, but also to move like a chess king
+- Each jump changes the jumping piece to the other piece type (a jumping pawn becomes a king, a king becomes a pawn after jumping)
+- You win when all your pieces are transformed to kings
+
 ## Features
 
 - Terminal application
