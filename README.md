@@ -5,7 +5,7 @@ players with simple [rules](https://omerkel.github.io/Uisge/html5/src/uisge_rule
 
 This application allows you to play Uisge against the computer in your terminal.
 
-![Screenshot](https://github.com/golmman/twilight-commander/blob/main/uisge.png "Uisge")
+![Screenshot](https://github.com/golmman/uisge/blob/main/uisge.png "Uisge")
 
 ## Features
 
