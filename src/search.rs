@@ -70,7 +70,7 @@ pub fn pvs(game_state: &GameState, alpha: i32, beta: i32, depth: u32, pv_line: &
     let mut moves = game_state.generate_moves();
 
     if moves.is_empty() {
-        return SCORE_MIN;
+        return SCORE_MIN + game_state.move_count as i32;
     }
 
     if !pv_line.moves.is_empty() {
@@ -118,6 +118,7 @@ pub fn evaluate(game_state: &GameState) -> i32 {
 
     // In a winning position high we are penalizing longer games,
     // in a losing position we reward longer games.
+    // TODO: if score is 0 and computer it is the computers turn give a penalty
     if score > 0 {
         score -= move_count_score;
     } else {

@@ -17,9 +17,11 @@ pub const COLOR_BLACK_ON_MAGENTA: &str = "\x1b[30;45m";
 pub const SCORE_STEP: i32 = 1000;
 pub const SCORE_MAX: i32 = 1000 * SCORE_STEP;
 pub const SCORE_MIN: i32 = -SCORE_MAX;
+
+#[allow(clippy::erasing_op, clippy::identity_op)]
 pub const SCORE_KING_COUNT: [i32; 7] = [
-    0,
-    SCORE_STEP,
+    0 * SCORE_STEP,
+    1 * SCORE_STEP,
     2 * SCORE_STEP,
     3 * SCORE_STEP,
     4 * SCORE_STEP,
