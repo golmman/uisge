@@ -15,6 +15,7 @@ This application allows you to play Uisge against the computer in your terminal.
 - The only allowed pawn move is jumping over other pieces horizontally or vertically
 - Kings are allowed to jump, like pawns, but also to move like a chess king
 - Each jump changes the jumping piece to the other piece type (a jumping pawn becomes a king, a king becomes a pawn after jumping)
+- Moves are only allowed such that all pieces remain [4-connected](https://en.wikipedia.org/wiki/Pixel_connectivity#4-connected)
 - You win when all your pieces are transformed to kings or when your opponent has no moves
 
 ## Features
