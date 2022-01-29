@@ -18,12 +18,14 @@ pub enum GameMode {
 
 pub struct Configuration {
     pub game_mode: GameMode,
-    pub search_depth_max: u32,
+    pub min_search_depth: u32,
+    pub min_search_time: u32,
 }
 
 pub fn start_gui(game_state: &mut GameState) {
     let game_mode: GameMode;
-    let search_depth_max = get_search_depth_max();
+    let min_search_depth = get_min_search_depth();
+    let min_search_time = get_min_search_time();
 
     println!();
 
@@ -53,7 +55,8 @@ pub fn start_gui(game_state: &mut GameState) {
 
     println!();
     println!("Configuration:");
-    println!("    Computer search depth: {search_depth_max}");
+    println!("    Computer search depth: {min_search_depth}");
+    println!("    Computer search time: {min_search_time}");
     println!();
     println!("Select game mode:");
     println!("    b - play against computer as black");
@@ -86,7 +89,8 @@ pub fn start_gui(game_state: &mut GameState) {
 
     let config = Configuration {
         game_mode,
-        search_depth_max,
+        min_search_depth,
+        min_search_time,
     };
 
     run_game(game_state, config);
@@ -103,7 +107,7 @@ fn run_game(game_state: &mut GameState, config: Configuration) {
         //println!("{:?}", game_state.board);
 
         if is_computers_turn(game_state, &config.game_mode) {
-            let mov = think(game_state, config.search_depth_max);
+            let mov = think(game_state, config.min_search_depth, config.min_search_time);
             println!("{COLOR_GREEN}computer moves {mov:?}{COLOR_RESET}");
 
             game_state.make_move(mov);
@@ -129,7 +133,7 @@ fn run_game(game_state: &mut GameState, config: Configuration) {
             }
         } else if buffer == "a" {
             println!("{COLOR_GREEN}analyze position{COLOR_RESET} (quit with ctrl+c)");
-            think(game_state, 100);
+            think(game_state, 100, 1_000_000_000);
         } else if buffer == "q" {
             println!("{COLOR_GREEN}quit{COLOR_RESET}");
             break;
@@ -139,14 +143,24 @@ fn run_game(game_state: &mut GameState, config: Configuration) {
     }
 }
 
-fn get_search_depth_max() -> u32 {
-    if let Ok(sdm_str) = std::env::var("SEARCH_DEPTH_MAX") {
-        if let Ok(sdm_num) = sdm_str.parse::<u32>() {
-            return sdm_num;
+fn get_min_search_depth() -> u32 {
+    if let Ok(msd_str) = std::env::var("MIN_SEARCH_DEPTH") {
+        if let Ok(msd_num) = msd_str.parse::<u32>() {
+            return msd_num;
         }
     };
 
-    11
+    12
+}
+
+fn get_min_search_time() -> u32 {
+    if let Ok(mst_str) = std::env::var("MIN_SEARCH_TIME") {
+        if let Ok(mst_num) = mst_str.parse::<u32>() {
+            return mst_num;
+        }
+    };
+
+    1000
 }
 
 fn is_computers_turn(game_state: &GameState, game_mode: &GameMode) -> bool {

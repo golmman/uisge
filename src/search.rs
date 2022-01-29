@@ -39,7 +39,7 @@ impl Display for PVLine {
     }
 }
 
-pub fn think(game_state: &GameState, max_depth: u32) -> Move {
+pub fn think(game_state: &GameState, max_depth: u32, min_time: u32) -> Move {
     let start_instant = Instant::now();
 
     let mut pv_line = PVLine::new();
@@ -49,9 +49,14 @@ pub fn think(game_state: &GameState, max_depth: u32) -> Move {
     for depth in 1..max_depth + 1 {
         let score_int = pvs(game_state, SCORE_MIN, SCORE_MAX, depth, &mut pv_line);
         let score = score_int as f32 / 1000f32;
-        let elapsed = start_instant.elapsed().as_millis() as f32 / 1000f32;
+        let elapsed_millis = start_instant.elapsed().as_millis();
+        let elapsed = elapsed_millis as f32 / 1000f32;
 
         println!("{elapsed:>10.3} | {depth:>5} | {score:>10.3} | {pv_line}");
+
+        if elapsed_millis > min_time.into() {
+            break;
+        }
     }
 
     pv_line.moves[0]
