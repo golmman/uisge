@@ -18,13 +18,13 @@ pub enum GameMode {
 
 pub struct Configuration {
     pub game_mode: GameMode,
-    pub min_search_depth: u32,
+    pub max_search_depth: u32,
     pub min_search_time: u32,
 }
 
 pub fn start_gui(game_state: &mut GameState) {
     let game_mode: GameMode;
-    let min_search_depth = get_min_search_depth();
+    let max_search_depth = get_max_search_depth();
     let min_search_time = get_min_search_time();
 
     println!();
@@ -55,7 +55,7 @@ pub fn start_gui(game_state: &mut GameState) {
 
     println!();
     println!("Configuration:");
-    println!("    Computer search depth: {min_search_depth}");
+    println!("    Computer search depth: {max_search_depth}");
     println!("    Computer search time: {min_search_time}");
     println!();
     println!("Select game mode:");
@@ -89,7 +89,7 @@ pub fn start_gui(game_state: &mut GameState) {
 
     let config = Configuration {
         game_mode,
-        min_search_depth,
+        max_search_depth,
         min_search_time,
     };
 
@@ -107,7 +107,7 @@ fn run_game(game_state: &mut GameState, config: Configuration) {
         //println!("{:?}", game_state.board);
 
         if is_computers_turn(game_state, &config.game_mode) {
-            let mov = think(game_state, config.min_search_depth, config.min_search_time);
+            let mov = think(game_state, config.max_search_depth, config.min_search_time);
             println!("{COLOR_GREEN}computer moves {mov:?}{COLOR_RESET}");
 
             game_state.make_move(mov);
@@ -143,14 +143,14 @@ fn run_game(game_state: &mut GameState, config: Configuration) {
     }
 }
 
-fn get_min_search_depth() -> u32 {
-    if let Ok(msd_str) = std::env::var("MIN_SEARCH_DEPTH") {
+fn get_max_search_depth() -> u32 {
+    if let Ok(msd_str) = std::env::var("MAX_SEARCH_DEPTH") {
         if let Ok(msd_num) = msd_str.parse::<u32>() {
             return msd_num;
         }
     };
 
-    12
+    20
 }
 
 fn get_min_search_time() -> u32 {

@@ -22,9 +22,9 @@ This application allows you to play Uisge against the computer in your terminal.
 
 - Terminal application
 - Play against computer as black or white
-  - Default search depth is 12 moves
-  - Default search time is 1000 milliseconds
-  - You can change the search depth/time by setting the `MIN_SEARCH_DEPTH` and `MIN_SEARCH_TIME` environment variables
+  - Default maximum search depth is 20 moves
+  - Default minimum search time is 1000 milliseconds
+  - You can change the search depth/time by setting the `MAX_SEARCH_DEPTH` and `MIN_SEARCH_TIME` environment variables
   - See below for an example
 - Play both sides
 - Let the computer analyze postions
@@ -36,6 +36,6 @@ This application allows you to play Uisge against the computer in your terminal.
 - Navigate to the repository root directory
 - Run the release version with `cargo run --release`
 - If you only need the build type `cargo build --release`, the executable can be found in `./target/release/`
-- Set the search depth/time with `MIN_SEARCH_DEPTH=15 MIN_SEARCH_TIME=25000 cargo run --release`
+- Set the search depth/time with `MAX_SEARCH_DEPTH=25 MIN_SEARCH_TIME=25000 cargo run --release`
 
 ### Good luck!
